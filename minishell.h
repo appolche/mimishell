@@ -20,7 +20,27 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include "libft/libft.h"
+# include "gnl/get_next_line.h"
 
-void parser(char *str, char **env);
+typedef struct s_data
+{
+    char *str;
+    char **env;
+}   t_data;
+
+typedef struct s_cmd
+{
+    char **cmd;
+}   t_cmd;
+
+int env_copy(t_data *data, char **env);
+void free_env(t_data *data);
+char *lexer(char *str, char **env);
+char *ft_quotes(char *str, int *i);
+char *ft_double_quotes(char *str, int *i, char **env);
+char *ft_backslash(char *str, int *i);
+char *ft_dollar(char *str, int *i, char **env);
+int ifkey(char c);
+
 
 #endif
