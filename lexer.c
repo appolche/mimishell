@@ -22,21 +22,12 @@ char *cut_char(char *str, int i, int j)
     return (tmp);
 }
 
-// char *change_piece(char *str, int i, int j)
-// {
-//     char *tmp;
-//     char *tmp2;
-//     char *tmp3;
-
-//     //добавить проверки на ноль
-
-// }
-
 char    *ft_dollar(char *str, int *i, char **env)
 {
     //сегается при "$USERhhh" и $USERhhh | баш при этом ничего не выводит (если нет другого арг)
     //мусор выводит, глупый
-    //$? - обработать -  возвращает код последней отработавшей программы
+    //$? - обработать -  возвращает код последней отработавшей программы 
+    //должен вылетать при вводе направильной переменной без одинарных кавычек (при двойных тодже вылетает)
     int j;
     int k;
     char *key;
@@ -77,7 +68,7 @@ char    *ft_dollar(char *str, int *i, char **env)
     tmp = ft_strjoin(tmp, tmp2);
     tmp = ft_strjoin(tmp, tmp3);
     //добавить проверки на ноль
-
+    free(key);
     free(str);
     return (tmp);
 
@@ -134,12 +125,29 @@ char *ft_quotes(char *str, int *i)
     return (str_new);
 }
 
+int lexer_errors(char *str)
+{
+    int i;
+
+    i = -1;
+    while(str[++i])
+    {
+        if (str[0] == '|' || str[0] == ';')
+            return (1);
+        else if ((str[i] == ';' || str[i] == '|') && (str[i + 1] == ';' || str[i + 1] == '|'))
+            return (1);
+    }
+    return (0);
+}
+
 char *lexer(char *str, char **env)
 {
     int i;
 
     i = -1;
     //добавить защиту на не закрытые ковычки и др ошибки
+    if (lexer_errors(str))
+        return (NULL);
     while(str[++i])
     {
         if (str[i] == '\'')
@@ -151,8 +159,10 @@ char *lexer(char *str, char **env)
         if (str[i] == '$')
             str = ft_dollar(str, &i, env);
     }
-    return(str);
+    return (str);
 }
+
+// if (| || < || >> || >)
 
 
 // minishell: "$USER"
