@@ -1,0 +1,31 @@
+ALREADY GOOD
+
+minishell: echo 111
+echo 111
+
+minishell: echo "111"
+echo 111
+
+minishell: echo '111'
+echo 111
+
+minishell: echo "'111'"
+echo '111'
+
+minishell: echo '"echo"'
+echo "echo"
+
+minishell: echo $USER
+echo dleaves
+
+minishell: echo "$USER"
+echo dleaves
+
+minishell: echo '$USER'
+echo $USER
+
+minishell: echo "'$USER'"
+echo 'dleaves'
+
+minishell: echo '"$USER"'
+echo "$USER"

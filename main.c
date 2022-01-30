@@ -1,30 +1,20 @@
 #include "minishell.h"
 
-
 //Нужны только два первых аргумента/ второй проверить на знак минус вначале
-//остальное парсить как аргументы,пайми, редиредкт и др команды
+//остальное парсить как аргументы,пайпи, редиредкт и др команды
 
 void parse_each_node(t_list *list)
 {
-    t_list  *tmp;
-    int     i;
+    int i;
 
-    tmp = list;
-    while (tmp)
-    {
-        i = -1;
-        while (tmp->str[++i])
-        {
-            
-        }
-        tmp = tmp->next;
-    }
     while (list)
     {
         list->cmd = ft_split(list->str, ' ');
         list = list->next;
     }
 }
+
+// if (| || < || >> || >)
 
 t_list *list_cmds(t_list **list, char *str)
 {
@@ -33,7 +23,7 @@ t_list *list_cmds(t_list **list, char *str)
 
     while (str[++i])
     {
-        if (str[i] == ';')
+        if (str[i] == '|')
         {
             if (!*list)
             {
@@ -46,6 +36,13 @@ t_list *list_cmds(t_list **list, char *str)
                 j = i;
             }
         }
+    }
+    if (str[i] == '\0')
+    {
+        if (!*list)
+            *list = create_list(ft_substr(str, 0, i));
+        else
+            ft_push_back(*list, ft_substr(str, j + 1, i - j - 1));
     }
     return (*list);
 }
@@ -68,21 +65,23 @@ int shell_loop(t_data *data, char **argv)
         str = lexer(data->str, data->env);
         if (!str)
             exit(1); //сделать ретурн?
+        printf("%s", str);
         list = list_cmds(&list, str);
         parse_each_node(list);
+        
+        cmd_proc(list->cmd, data->env);
+        //проверка
+        // t_list *tmp = list;
+        // int c = -1;
+        // while (tmp)
+        // {
+        //     c = -1;
+        //     while (tmp->cmd[++c] != NULL)
+        //         printf("%d: %s\n",c, tmp->cmd[c]);
+        //     tmp = tmp->next;
+        // }
 
-//проверка
-        t_list *tmp = list;
-        int c = -1;
-        while (tmp)
-        {
-            c = -1;
-            while(tmp->cmd[++c] != NULL)
-                printf("%s\n", tmp->cmd[c]);
-            tmp = tmp->next;
-        }
-
-        free(list);
+        //free(list);
     }
 }
 
@@ -91,10 +90,10 @@ int main(int argc, char **argv, char **env)
     t_data *data;
 
     data = malloc(sizeof(t_data));
+    // env copy
     if (env_copy(data, env) == 1)
         return (1);
     shell_loop(data, argv);
-
     free_env(data);
     free(data);
     return (0);

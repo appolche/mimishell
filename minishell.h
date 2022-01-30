@@ -51,4 +51,9 @@ t_list *create_list(char *content);
 void split_by_space(char *str, t_list *list);
 void ft_push_back(t_list *list, char *content);
 
+void	ft_exec(char **cmd, char **envp);
+void	path_search(char **path, char **cmd, char **envp);
+void	absolute_path_exec(char **cmd, char **envp);
+void cmd_proc(char **cmd, char **env);
+
 #endif
