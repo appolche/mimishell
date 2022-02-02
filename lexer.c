@@ -133,9 +133,15 @@ int lexer_errors(char *str)
     while(str[++i])
     {
         if (str[0] == '|' || str[0] == ';')
+        {
+            printf("minishell: syntax error near unexpected token `%c'\n", str[0]);
             return (1);
+        }
         else if ((str[i] == ';' || str[i] == '|') && (str[i + 1] == ';' || str[i + 1] == '|'))
+        {
+            printf("minishell: syntax error near unexpected token `%c'\n", str[i + 1]);
             return (1);
+        }
     }
     return (0);
 }

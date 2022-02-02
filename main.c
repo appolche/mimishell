@@ -1,8 +1,5 @@
 #include "minishell.h"
 
-//Нужны только два первых аргумента/ второй проверить на знак минус вначале
-//остальное парсить как аргументы,пайпи, редиредкт и др команды
-
 void parse_each_node(t_list *list)
 {
     int i;
@@ -56,7 +53,7 @@ int shell_loop(t_data *data, char **argv)
     {
         t_list *list = NULL;
         write(1, "minishell: ", 11);
-        data->str = get_next_line(0);
+        data->str = gnl_stdin(0);
         if (data->str == NULL)
         {
             ft_putstr_fd("exit\n", 1);
@@ -65,11 +62,12 @@ int shell_loop(t_data *data, char **argv)
         str = lexer(data->str, data->env);
         if (!str)
             exit(1); //сделать ретурн?
-        printf("%s", str);
+        printf("%s\n", str);
         list = list_cmds(&list, str);
         parse_each_node(list);
-        
-        cmd_proc(list->cmd, data->env);
+        //one_cmd_proc(list->cmd, data->env);
+        pipe_cmd_proc(list, data->env);
+
         //проверка
         // t_list *tmp = list;
         // int c = -1;
@@ -81,7 +79,7 @@ int shell_loop(t_data *data, char **argv)
         //     tmp = tmp->next;
         // }
 
-        //free(list);
+        free(list);
     }
 }
 

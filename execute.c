@@ -19,11 +19,11 @@ static char **malloc_free(char **smth)
 
 void absolute_path_exec(char **cmd, char **envp)
 {
-	if (!access(cmd[0], X_OK))
+	if (access(cmd[0], X_OK) == 0)
 	{
 		if (execve(cmd[0], cmd, envp) == -1)
 			malloc_free(cmd);
-		show_error("Error: Cmd execution failed\n");
+		//show_error("Error: Cmd execution failed\n");
 	}
 	malloc_free(cmd);
 	ft_putstr_fd("Error: Path not found\n", 2);
@@ -40,22 +40,28 @@ void path_search(char **path, char **cmd, char **envp)
 	{
 		tmp = ft_strjoin(path[j], "/");
 		final_path = ft_strjoin(tmp, cmd[0]);
+		//printf("%s\n", final_path);
 		free(tmp);
-		if (!access(final_path, X_OK))
+		if (access(final_path, X_OK) == 0)
 		{
+			//printf("path: %s accessed\n", final_path);
 			if (execve(final_path, cmd, envp) == -1)
 			{
 				malloc_free(path);
 				// malloc_free(cmd);
 				if (final_path)
 					free(final_path);
-				show_error("Error: Cmd execution failed\n");
+				//show_error("Error: Cmd execution failed\n");
 			}
+			//printf("Error: access failed\n");
 		}
 		if (final_path)
 			free(final_path);
 	}
-	malloc_free(path);
+	printf("minishell: %s: command not found\n", cmd[0]);
+	if (path)
+		malloc_free(path);
+	exit (1);
 }
 
 void ft_exec(char **cmd, char **envp)
@@ -65,10 +71,11 @@ void ft_exec(char **cmd, char **envp)
 
 	i = 0;
 	path = NULL;
-	// if (cmd[0][0] == '/' || (cmd[0][0] == '.' && cmd[0][1] == '/'))
-	// 	absolute_path_exec(cmd, envp);
+	if (cmd[0][0] == '/' || (cmd[0][0] == '.' && cmd[0][1] == '/'))
+		absolute_path_exec(cmd, envp);
 	while (envp[i])
 	{
+		if ((ft_strnstr(envp[i], "PATH=", 5)))
 		{
 			path = ft_split(envp[i], ':');
 			if (!path)
@@ -79,17 +86,17 @@ void ft_exec(char **cmd, char **envp)
 	}
 	if (path)
 		path_search(path, cmd, envp);
+	// else
+	// 	show_error("Error: Path not found\n");
 	// if (cmd)
 	// 	malloc_free(cmd);
-	// show_error("Error: Path not found\n");
+	
 }
 
-void cmd_proc(char **cmd, char **env)
+void one_cmd_proc(char **cmd, char **env)
 {
 	pid_t pid;
 
-	
-	dup2(0, 0);
 	pid = fork();
 	if (pid == -1)
 		show_error("Error: Fork\n");

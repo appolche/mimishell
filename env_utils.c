@@ -31,3 +31,4 @@ int env_copy(t_data *data, char **env)
     data->env[j] = NULL;
     return (0);
 }
+

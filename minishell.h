@@ -54,6 +54,13 @@ void ft_push_back(t_list *list, char *content);
 void	ft_exec(char **cmd, char **envp);
 void	path_search(char **path, char **cmd, char **envp);
 void	absolute_path_exec(char **cmd, char **envp);
-void cmd_proc(char **cmd, char **env);
+void one_cmd_proc(char **cmd, char **env);
+char	*gnl_stdin(int fd);
+void show_error(char *message);
+
+void pipe_cmd_proc(t_list *list, char **envp);
+void	pipe_proc(char **cmd, char **envp);
+void	pipe_child_proc(char **cmd, char **envp, int pipe_fd[2]);
+void	pipe_parent_proc(int pipe_fd[2], pid_t pid);
 
 #endif
