@@ -39,3 +39,8 @@ llehcsimim/potkseD/sevaeld/sresU/
 minishell: pwd | rev | cat
 pwd | rev | cat
 llehcsimim/potkseD/sevaeld/sresU/
+
+ls -l| pwd| rev|
+trying to get end of cmd
+like
+>pwd means = ls -l| pwd| rev| pwd

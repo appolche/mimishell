@@ -1,5 +1,34 @@
 #include "minishell.h"
 
+t_list *add_list(t_list **list, char *str, int *i, int *j)
+{
+    if (!*list)
+    {
+        *j = *i;
+        *list = create_list(ft_substr(str, 0, *i));
+    }
+    else
+    {
+        ft_push_back(*list, ft_substr(str, *j + 1, *i - *j - 1));
+        *j = *i;
+    }
+}
+
+t_list *list_cmds(t_list **list, char *str)
+{
+    int i = -1;
+    int j = 0;
+
+    while (str[++i])
+    {
+        if (str[i] == '|')
+            add_list(&(*list), str, &i, &j);
+    }
+    if (str[i] == '\0')
+        add_list(&(*list), str, &i, &j);
+    return (*list);
+}
+
 t_list *list_top(t_list *list)
 {
     t_list *tmp;

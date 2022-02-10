@@ -21,7 +21,7 @@ $(NAME): $(OBJ) $(HEADER)
 	ranlib $(NAME)
 
 %.o: %.c
-	gcc -c -Wall -Wextra -Werror -I $(INCLUDES) -o $@ $<
+	gcc -c -Wall -Wextra -Werror -g -I $(INCLUDES) -o $@ $<
 
 clean: 
 	rm -f $(OBJ)

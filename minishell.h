@@ -20,23 +20,33 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include "libft/libft.h"
-# include "gnl/get_next_line.h"
+//# include "gnl/get_next_line.h"
 
 typedef struct s_data
 {
     char *str;
     char **env;
-    char **str_args;
-    char **cmd_args;
-    char *spec_char;
 }   t_data;
+
+                // if (i != 0)
+                // {
+                //     list->str_cmd = ft_substr(list->str, 0, i);
+                //     if (!list->str_cmd)
+                //         return (1);
+                // }
+                // else 
+                //     if(list->str_cmd)
+                //         free(list->str_cmd);
 
 typedef struct s_list
 {
     struct s_list	*next;
     struct s_list	*prev;
     char *str;
+    char *str_cmd;
+    char *str_redir;
     char **cmd;
+    char **redir;
 }   t_list;
 
 int env_copy(t_data *data, char **env);
@@ -48,19 +58,20 @@ char *ft_backslash(char *str, int *i);
 char *ft_dollar(char *str, int *i, char **env);
 int ifkey(char c);
 t_list *create_list(char *content);
-void split_by_space(char *str, t_list *list);
 void ft_push_back(t_list *list, char *content);
 
 void	ft_exec(char **cmd, char **envp);
 void	path_search(char **path, char **cmd, char **envp);
-void	absolute_path_exec(char **cmd, char **envp);
+void		absolute_path_exec(char **cmd, char **envp);
 void one_cmd_proc(char **cmd, char **env);
-char	*gnl_stdin(int fd);
 void show_error(char *message);
 
 void pipe_cmd_proc(t_list *list, char **envp);
 void	pipe_proc(char **cmd, char **envp);
 void	pipe_child_proc(char **cmd, char **envp, int pipe_fd[2]);
 void	pipe_parent_proc(int pipe_fd[2], pid_t pid);
+
+t_list *list_cmds(t_list **list, char *str);
+t_list *add_list(t_list **list, char *str, int *i, int *j);
 
 #endif
