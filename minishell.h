@@ -51,27 +51,27 @@ typedef struct s_list
 
 int env_copy(t_data *data, char **env);
 void free_env(t_data *data);
+
 char *lexer(char *str, char **env);
 char *ft_quotes(char *str, int *i);
 char *ft_double_quotes(char *str, int *i, char **env);
 char *ft_backslash(char *str, int *i);
 char *ft_dollar(char *str, int *i, char **env);
 int ifkey(char c);
-t_list *create_list(char *content);
-void ft_push_back(t_list *list, char *content);
 
 void	ft_exec(char **cmd, char **envp);
 void	path_search(char **path, char **cmd, char **envp);
-void		absolute_path_exec(char **cmd, char **envp);
-void one_cmd_proc(char **cmd, char **env);
-void show_error(char *message);
+void	absolute_path_exec(char **cmd, char **envp);
+void    one_cmd_proc(char **cmd, char **env);
+void    show_error(char *message);
 
-void pipe_cmd_proc(t_list *list, char **envp);
+void    pipe_cmd_proc(t_list *list, char **envp);
 void	pipe_proc(char **cmd, char **envp);
 void	pipe_child_proc(char **cmd, char **envp, int pipe_fd[2]);
 void	pipe_parent_proc(int pipe_fd[2], pid_t pid);
 
 t_list *list_cmds(t_list **list, char *str);
-t_list *add_list(t_list **list, char *str, int *i, int *j);
+t_list *create_list(char *content);
+void ft_push_back(t_list *list, char *content);
 
 #endif

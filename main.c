@@ -60,7 +60,22 @@ void cut_str_cmd(t_list *list, int start)
         free(tmp);
         free(tmp2);
     }
-    printf("%s\n", list->str_cmd);
+    // printf("%s\n", list->str_cmd);
+}
+
+void trim_list_strs(t_list *list)
+{
+    char *tmp;
+
+    while(list)
+    {
+        // printf("        string: |%s|\n", list->str);
+        tmp = ft_strtrim(list->str, " ");
+        free(list->str);
+        list->str = tmp;
+        // printf("trimmed string: |%s|\n", list->str);
+        list = list->next;
+    }
 }
 
 int check_redirs(char *str, t_list *list)
@@ -95,7 +110,7 @@ int check_redirs(char *str, t_list *list)
                         return (1);
                 }
                 n++;
-                printf("%s\n", list->str_redir);
+                // printf("%s\n", list->str_redir);
             }
         }
         cut_str_cmd(list, start);
@@ -105,6 +120,19 @@ int check_redirs(char *str, t_list *list)
 }
 
 // if (| || < || >> || >)
+void free_list_str(t_list *list)
+{
+    while(list)
+    {
+        if (list->str)
+            free(list->str);
+        if (list->str_cmd)
+            free(list->str_cmd);
+        if (list->str_redir)
+            free(list->str_redir);
+        list = list->next;
+    }
+}
 
 int shell_loop(t_data *data, char **argv)
 {
@@ -123,17 +151,18 @@ int shell_loop(t_data *data, char **argv)
             return (1);
         }
         printf("%s\n", str);
-        // data->str = lexer(str, data->env);
-        // if (!data->str)
-        //     exit(1); //сделать ретурн?
-        // list = list_cmds(&list, data->str);
-        // if (check_redirs(data->str, list))
-        //     exit(1);
-        // parse_each_node(list);
-        //one_cmd_proc(list->cmd, data->env);
-        //pipe_cmd_proc(list, data->env);
+        data->str = lexer(str, data->env);
+        if (!data->str)
+            exit(1); //сделать ретурн?
+        list = list_cmds(&list, data->str);
+        trim_list_strs(list);
+        if (check_redirs(data->str, list))
+            exit(1);
+        parse_each_node(list);
+        // //one_cmd_proc(list->cmd, data->env);
+        pipe_cmd_proc(list, data->env);
 
-        //проверка
+        // //проверка
         // t_list *tmp = list;
         // int k;
         // while (tmp)
@@ -143,13 +172,12 @@ int shell_loop(t_data *data, char **argv)
         //         printf("cmd: %d: %s\n", k, tmp->cmd[k]);
         //     k = -1;
         //     while (tmp->redir[++k])
-        //         printf("red: %d: %s\n",k, tmp->redir[k]);
+        //         printf("red: %d: %s\n", k, tmp->redir[k]);
         //     tmp = tmp->next;
         // }
-        // free(data->str);
-        //free(list->str_cmd);
-        // free(list->str_redir);
-        // free(list);
+        free(data->str);
+        free_list_str(list);
+        free(list);
     }
 }
 

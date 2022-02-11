@@ -146,11 +146,13 @@ int lexer_errors(char *str)
     return (0);
 }
 
-char *lexer(char *str, char **env)
+char *lexer(char *rl_str, char **env)
 {
     int i;
+    char *str;
 
     i = -1;
+    str = ft_strtrim(rl_str, " ");
     //добавить защиту на не закрытые ковычки и др ошибки
     if (lexer_errors(str))
         return (NULL);

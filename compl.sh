@@ -1,1 +1,0 @@
-gcc main.c libft/libft.a env_utils.c lexer.c list_tools.c execute.c utils.c pipex.c
