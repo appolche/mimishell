@@ -11,27 +11,8 @@ void parse_each_node(t_list *list)
         list = list->next;
     }
 }
+//shlvl=.... обрубить по равно и поменть env
 
-char    *ft_substr_cpy(char *src, int start, char c)
-{
-    char *dst;
-	int	i;
-	int	len;
-
-	if (!src)
-		return (0);
-	i = start + 1;
-    if (src[i] == c)
-    {
-	    while (src[i] == c)
-		    i++;
-    }
-    while (src[i] != c)
-		    i++;
-    len = i - start;
-    dst = ft_substr(src, start, len);
-	return (dst);
-}
 
 void cut_str_cmd(t_list *list, int start)
 {
@@ -49,14 +30,36 @@ void cut_str_cmd(t_list *list, int start)
     }
     else
     {
-        redir_len = ft_strlen(list->str_redir);
+        redir_len = ft_strlen(list->str_redir); //меньше чем в изначальной строке
         len = ft_strlen(list->str);
         tmp = ft_substr(list->str, 0, start);
         tmp2 = ft_substr(list->str, start + redir_len, len - redir_len);
         list->str_cmd = ft_strjoin(tmp, tmp2);
-        free(tmp);
-        free(tmp2);
     }
+    printf("str_cmd: %s\n", list->str_cmd);
+}
+
+char    *ft_substr_cpy(char *src, int *start, char c)
+{
+    char *dst;
+	int	i;
+	int	len;
+
+	if (!src)
+		return (0);
+	i = *start + 1;
+	while (src[i] && src[i] == c)
+		    i++;
+    while (src[i]) //до ближайшего пробела
+    {
+        if (src[i] == c)
+            break;
+        i++;
+    }
+    len = i - *start;
+    dst = ft_substr(src, *start, len);
+    *start = i - 1;
+	return (dst);
 }
 
 int check_redirs(char *str, t_list *list)
@@ -70,8 +73,6 @@ int check_redirs(char *str, t_list *list)
         i = -1;
         count = 0;
         start = 0;
-        list->str_redir = NULL;
-        list->str_cmd = NULL;
         while (list->str[++i])
         {
             if (list->str[i] == '>' || list->str[i] == '<') //затирает и перезаписывает в файл
@@ -79,15 +80,16 @@ int check_redirs(char *str, t_list *list)
                 if (count == 0)
                 { 
                     start = i;
-                    list->str_redir = ft_substr_cpy(str, i, ' ');
+                    list->str_redir = ft_substr_cpy(str, &i, ' ');
+                    count++;
                 }
                 else
-                    list->str_redir = ft_strjoin(list->str_redir, ft_substr_cpy(str, i, ' '));
+                    list->str_redir = ft_strjoin(list->str_redir, ft_substr_cpy(str, &i, ' '));
                 //мб добавить пробел между строками
-                count++;
             }
         }
         cut_str_cmd(list, start);
+        printf("str_redir: %s\n", list->str_redir);
         list = list->next;
     }
     return (0);

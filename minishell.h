@@ -66,7 +66,7 @@ t_list  *list_init(t_list *list, t_data *data);
 int    trim_list_strs(t_list *list);
 int check_redirs(char *str, t_list *list);
 void cut_str_cmd(t_list *list, int start);
-char    *ft_substr_cpy(char *src, int start, char c);
+char    *ft_substr_cpy(char *src, int *start, char c);
 void parse_each_node(t_list *list);
 
 char	**malloc_free(char **tab);
