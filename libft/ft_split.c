@@ -1,6 +1,6 @@
 #include "libft.h"
 
-static char	**malloc_free(char **tab)
+char	**malloc_free(char **tab)
 {
 	unsigned int	i;
 

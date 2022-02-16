@@ -1,2 +1,0 @@
-# libft
-EVALUATED BY MOULINETTE

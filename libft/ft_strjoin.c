@@ -6,8 +6,8 @@ char	*ft_strjoin(char *s1, char *s2)
 	int		i;
 	int		j;
 
-	// if (!s1 || !s2)
-	// 	return (NULL);
+	if (!s1|| !s2)
+		return (NULL);
 	s3 = malloc((ft_strlen(s1) + ft_strlen(s2) + 1) * sizeof(char));
 	if (!s3)
 		return (NULL);
@@ -24,7 +24,7 @@ char	*ft_strjoin(char *s1, char *s2)
 		j++;
 	}
 	s3[j + i] = '\0';
-	// free (s1);
-	// free (s2);
+	free(s1);
+	free(s2);
 	return (s3);
 }

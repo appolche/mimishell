@@ -1,40 +1,52 @@
 #include "libft.h"
 
-static int	ft_cmp(char c, char const *set)
+static char		*ft_strncpy(char *dest, const char *src, size_t n)
 {
 	size_t	i;
 
 	i = 0;
-	while (set[i])
+	while (src[i] != '\0' && i < n)
 	{
-		if (set[i] == c)
-			return (1);
+		dest[i] = src[i];
+		++i;
+	}
+	while (i < n)
+	{
+		dest[i] = '\0';
 		i++;
+	}
+	return (dest);
+}
+
+static int		to_find(char const *set, char c)
+{
+	while (*set)
+	{
+		if (c == *set)
+			return (1);
+		set++;
 	}
 	return (0);
 }
 
-char	*ft_strtrim(char const *s1, char const *set)
+char			*ft_strtrim(char const *s1, char const *set)
 {
-	char	*str;
-	size_t	i;
-	size_t	start;
-	size_t	end;
+	int		i;
+	int		len;
+	char	*res;
 
 	if (!s1 || !set)
 		return (0);
-	start = 0;
-	end = ft_strlen(s1);
-	while (s1[start] && ft_cmp(s1[start], set))
-		start++;
-	while (end > start && ft_cmp(s1[end - 1], set))
-		end--;
-	str = malloc ((end - start + 1) * sizeof(*s1));
-	if (NULL == str)
-		return (NULL);
 	i = 0;
-	while (start != end)
-		str[i++] = s1[start++];
-	str[i] = '\0';
-	return (str);
+	while (s1[i] && to_find(set, s1[i]))
+		i++;
+	len = ft_strlen(s1 + i);
+	if (len != 0)
+		while (s1[len + i - 1] && to_find(set, s1[len + i - 1]))
+			len--;
+	if (!(res = malloc(sizeof(char) * (len + 1))))
+		return (0);
+	ft_strncpy(res, s1 + i, len);
+	res[len] = '\0';
+	return (res);
 }

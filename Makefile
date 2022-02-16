@@ -1,10 +1,18 @@
 NAME = mimishell
 
-SRC = main.c lexer.c env_utils.c execute.c fd_proc.c list_tools.c pipex.c
+REBUILT_FUNCS = ./sanya_funcs/ft_cd.c \
+					./sanya_funcs/ft_echo.c \
+					./sanya_funcs/ft_env.c \
+					./sanya_funcs/ft_exit.c \
+					./sanya_funcs/ft_export.c \
+					./sanya_funcs/ft_pwd.c \
+					./sanya_funcs/ft_unset.c \
+
+SRC = main.c env_copy.c env_list_tools.c swap_val_list.c lexer.c quotes.c parse_list.c list_tools.c $(REBUILT_FUNCS)
 
 OBJS = $(SRC:.c=.o)
 
-FLAGS = -Wall -Werror -Wextra -lreadline
+FLAGS = -Wall -Werror -Wextra -lreadline -g
 LFLAGS = -L $(LDIR) -lft
 LDIR = ./libft/
 
