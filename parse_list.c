@@ -11,8 +11,7 @@ void parse_each_node(t_list *list)
         list = list->next;
     }
 }
-//shlvl=.... обрубить по равно и поменть env
-
+// shlvl=.... обрубить по равно и поменть env
 
 void cut_str_cmd(t_list *list, int start)
 {
@@ -39,65 +38,78 @@ void cut_str_cmd(t_list *list, int start)
     printf("str_cmd: %s\n", list->str_cmd);
 }
 
-char    *ft_substr_cpy(char *src, int *start, char c)
-{
-    char *dst;
-	int	i;
-	int	len;
+// char *cut_piece(char *str, int start/j, int end/i)
+// {
+//     char *tmp;
+//     char *tmp2;
+//     int  size;
 
-	if (!src)
-		return (0);
-	i = *start + 1;
-	while (src[i] && src[i] == c)
-		    i++;
-    while (src[i]) //до ближайшего пробела
+//     tmp = ft_substr(str, 0, start);
+//     //tmp2 = ft_strdup(value);
+//     tmp2 = ft_substr(str, start + size, ft_strlen(str) - start);
+//     if (!tmp || !tmp2)
+//         return (NULL);
+//     tmp = ft_strjoin(tmp, tmp2);
+//     if (!tmp)
+//         return (NULL);
+//     free(str);
+//     return (tmp);
+// }
+//new_str = cut_and_change_piece(str, start, tmp->name, tmp->value);
+
+void redir_copy(t_list *list, char *str, int i, int j)
+{
+    int start;
+    int len;
+    char *tmp;
+
+    if (!str)
+        return ;
+    start = i;
+    i++;
+    while (str[i] && str[i] == ' ')
+        i++;
+    while (str[i])
     {
-        if (src[i] == c)
+        if (str[i] == ' ')
             break;
         i++;
     }
-    len = i - *start;
-    dst = ft_substr(src, *start, len);
-    *start = i - 1;
-	return (dst);
+    tmp = ft_substr(str, start, i - start);
+    if (!list->str_redir)
+        list->str_redir = tmp;
+    else
+        list->str_redir = ft_strjoin(list->str_redir, tmp);
 }
 
-int check_redirs(char *str, t_list *list)
+int check_redirs(t_list *list)
 {
     int i;
     int count;
-    int start;
+    int j;
 
     while (list)
     {
         i = -1;
-        count = 0;
-        start = 0;
+        j = 0;
         while (list->str[++i])
         {
             if (list->str[i] == '>' || list->str[i] == '<') //затирает и перезаписывает в файл
             {
-                if (count == 0)
-                { 
-                    start = i;
-                    list->str_redir = ft_substr_cpy(str, &i, ' ');
-                    count++;
-                }
-                else
-                    list->str_redir = ft_strjoin(list->str_redir, ft_substr_cpy(str, &i, ' '));
-                //мб добавить пробел между строками
+                redir_copy(list, list->str, i, j);
+                j = i;
             }
         }
-        cut_str_cmd(list, start);
         printf("str_redir: %s\n", list->str_redir);
+        //cut_str_cmd(list, j);
         list = list->next;
     }
     return (0);
 }
 
-int    trim_list_strs(t_list *list)
+int trim_list_strs(t_list *list)
 {
-    char    *tmp;
+    char *tmp;
 
     while (list)
     {
@@ -111,26 +123,12 @@ int    trim_list_strs(t_list *list)
     return (0);
 }
 
-void make_null_init(t_list *list)
+void list_parse(t_list *list, t_data *data) // change to data->str
 {
-    while (list)
-    {
-        list->str_cmd = NULL;
-        list->str_redir = NULL;
-        list->cmd = NULL;
-        list->redir = NULL;
-        list = list->next;
-    }
-}
-
-t_list  *list_init(t_list *list, t_data *data) //change to data->str
-{
-    list = create_list(list, data->str);
-    make_null_init(list);
     if (trim_list_strs(list))
-        ft_exit(1); 
-    if (check_redirs(data->str, list))
         ft_exit(1);
-    parse_each_node(list);
-    return (list);
+    if (check_redirs(list))
+        ft_exit(1);
+    // parse_each_node(list);
+    // return (list);
 }

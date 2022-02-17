@@ -1,23 +1,24 @@
 #include "minishell.h"
 
-t_list *create_list(t_list *list, char *str)
+void make_null_init(t_list *list)
 {
-    int i;
-    char **splitted_str;
-
-    i = 0;
-    splitted_str = ft_split(str, '|');
-    if (!splitted_str)
-        return (NULL);
-    list = create_head(splitted_str[i]);
-    while (splitted_str[++i])
+    while (list)
     {
-        if (splitted_str[i][0])
-            ft_push_back(list, splitted_str[i]);
-        else
-            free(splitted_str[i]);
+        list->str_cmd = NULL;
+        list->str_redir = NULL;
+        list->cmd = NULL;
+        list->redir = NULL;
+        list = list->next;
     }
-    free(splitted_str);
+}
+
+t_list *create_list(t_list *list, char *str, int i, int j)
+{
+    
+    if (!list)
+        list = create_head(ft_substr(str, 0, i));
+    else
+        ft_push_back(list, ft_substr(str, j + 1, i - j - 1));
     return (list);
 }
 

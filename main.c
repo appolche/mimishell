@@ -1,4 +1,10 @@
 #include "minishell.h"
+/*
+вписать в лексер < >
+открывать их сразу? как дупать их в пайпах?
+ls | wc > file1 | ppwd
+привязать к конкретному листу/команде?
+*/
 
 void check_list_splitted_cmd_redir(t_list *list)
 { // //проверка
@@ -25,7 +31,7 @@ void check_list_splitted_str(t_list *list)
     int k = 1;
     while (tmp)
     {
-        printf("list->str: %d: %s\n", k, tmp->str);
+        printf("list->str: %d: |%s|\n", k, tmp->str);
         k++;
         tmp = tmp->next;
     }
@@ -44,13 +50,13 @@ int shell_loop(t_data *data, t_envp *envp)
             add_history(str);
         else if (str == NULL)
             ft_exit(1);
-        data->str = lexer(str, envp);
+        data->str = lexer(str, envp, &list);
         if (!data->str)
             ft_exit(1); //должен вывести новую строчку | сделать ошибку только выделения памяти
-        list = list_init(list, data);
-        if (!list)
-            ft_exit(1); //должен вывести новую строчку | сделать ошибку только выделения памяти
-        check_list_splitted_cmd_redir(list);
+        list_parse(list, data);
+        // if (!list)
+        //     ft_exit(1); //должен вывести новую строчку | сделать ошибку только выделения памяти
+        //check_list_splitted_cmd_redir(list);
         if (str)
             free(str);
         if (list)

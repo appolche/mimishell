@@ -12,49 +12,6 @@ int check_unclosed_quotes(int quote_pair, char *str)
         return (0);
 }
 
-// char *check_pipes_in_quotes(char *str)
-// {
-//     int pipe_in_quotes;
-//     int i;
-
-//     pipe_in_quotes = 0;
-//     i = 0;
-//     while (str[i++])
-//     {
-//         if (str[i] == '|')
-//             pipe_in_quotes++;
-//     }
-//     if (pipe_in_quotes)
-//     {
-// заменить пайп на что-то другое, потом вернуть на место после сплита...........
-//     }
-   
-// }
-
-char *cut_and_change_piece(char *str, int start, char *name, char *value) //мб убрать?
-{
-    char *tmp;
-    char *tmp2;
-    char *tmp3;
-    int  size;
-
-    size = 0;
-    size = ft_strlen(name) + 1;
-    tmp = ft_substr(str, 0, start);
-    tmp2 = ft_strdup(value);
-    tmp3 = ft_substr(str, start + size, ft_strlen(str) - start - size);
-    if (!tmp || !tmp2)
-        return (NULL);
-    tmp = ft_strjoin(tmp, tmp2);
-    if (!tmp)
-        return (NULL);
-    tmp = ft_strjoin(tmp, tmp3);
-    if (!tmp)
-        return (NULL);
-    free(str);
-    return (tmp);
-}
-
 char *cut_quotes(char *str, int start, int end)
 {
     char *tmp;

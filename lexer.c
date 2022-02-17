@@ -10,7 +10,12 @@ static int lexer_errors(char *str)
     i = -1;
     while (str[++i])
     {
-        if (str[i] == '|' && str[i + 1] == '\0')
+        if (str[0] == '|')
+        {
+            printf("minishell: syntax error near unexpected token `|'\n");
+            return (1);
+        }
+        else if (str[i] == '|' && str[i + 1] == '\0')
         {
             printf("minishell: error: no command after pipe\n");
             return (1);
@@ -19,50 +24,15 @@ static int lexer_errors(char *str)
     return (0);
 }
 
-char    *ft_dollar(char *str, int *i, t_envp *envp)
-{
-    //сегается при "$USERhhh" и $USERhhh | баш при этом ничего не выводит (если нет другого арг)
-    //должен вылетать при вводе направильной переменной без одинарных кавычек (при двойных тодже вылетает)
-    int start;
-    t_envp *tmp;
-    char *name;
-    char *value;
-    char *new_str;
-
-    start = *i;
-    tmp = envp;
-    (*i)++;
-    while (str[*i] && (str[*i] == '_' || ft_isalnum(str[*i])))
-        (*i)++;
-    name = ft_substr(str, start + 1, *i - start - 1);
-    printf("%s\n", name);
-    if (!name)
-        return (NULL);
-    while (tmp)
-    {
-        if (ft_strcmp(tmp->name, name) == 0)
-            break;
-        tmp = tmp->next;
-    }
-    if (!tmp)
-    {
-        free(name);
-        free(str);
-        return (NULL);
-    }
-    new_str = cut_and_change_piece(str, start, tmp->name, tmp->value);
-    *i = start + ft_strlen(tmp->value) - 1;
-    free(name);
-    return (new_str);
-}
-
-char *lexer(char *rl_str, t_envp *envp)
+char *lexer(char *rl_str, t_envp *envp, t_list **list)
 {
     char *str;
     int i;
+    int j;
 
     i = -1;
-    str = ft_strtrim(rl_str, " ");
+    j = 0;
+    str = ft_strtrim(rl_str, " "); //cut spaces
     if (lexer_errors(str))
     {   
         free(str);
@@ -88,7 +58,15 @@ char *lexer(char *rl_str, t_envp *envp)
             if (!str)
                 break;
         }
+        if (str[i] == '|')
+        {
+            *list = create_list(*list, str, i, j);
+            if (!str)
+                break;
+            j = i;
+        }
     }
-    printf("|%s|\n", str);
+    *list = create_list(*list, str, i, j);
+    make_null_init(*list);
     return (str);
 }

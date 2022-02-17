@@ -48,7 +48,7 @@ typedef struct s_list
 //my_part
 int shell_loop(t_data *data, t_envp *envp);
 
-char    *lexer(char *rl_str, t_envp *envp);
+char    *lexer(char *rl_str, t_envp *envp, t_list **list);
 
 char    *ft_single_quotes(char *str, int *i);
 char    *ft_double_quotes(char *str, int *i, t_envp *envp);
@@ -58,14 +58,15 @@ char    *cut_quotes(char *str, int start, int end);
 char    *cut_and_change_piece(char *str, int start, char *name, char *value);
 int     check_unclosed_quotes(int quote_pair, char *str);
 
-t_list *create_list(t_list *list, char *str);
-t_list *create_head(char *content);
-void ft_push_back(t_list *list, char *content);
+t_list  *create_list(t_list *list, char *str, int i, int j);
+t_list  *create_head(char *content);
+void    ft_push_back(t_list *list, char *content);
+void    make_null_init(t_list *list);
+int     trim_list_strs(t_list *list);
 
-t_list  *list_init(t_list *list, t_data *data);
-int    trim_list_strs(t_list *list);
-int check_redirs(char *str, t_list *list);
-void cut_str_cmd(t_list *list, int start);
+void    list_parse(t_list *list, t_data *data);
+int     check_redirs(t_list *list);
+void    cut_str_cmd(t_list *list, int start);
 char    *ft_substr_cpy(char *src, int *start, char c);
 void parse_each_node(t_list *list);
 
