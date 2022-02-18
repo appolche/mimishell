@@ -24,7 +24,33 @@ static int lexer_errors(char *str)
     return (0);
 }
 
-char *lexer(char *rl_str, t_envp *envp, t_list **list)
+char *ft_redirect(char *str, int *i, char *redir)
+{
+    int start;
+    int len;
+    char *tmp;
+
+    if (!str)
+        return (NULL);
+    start = *i;
+    *i++;
+    while (str[*i] && str[*i] == ' ')
+        *i++;
+    while (str[*i])
+    {
+        if (str[*i] == ' ')
+            break;
+        *i++;
+    }
+    tmp = ft_substr(str, start, *i - start);
+    if (!redir)
+        redir = tmp;
+    else
+        redir = ft_strjoin(redir, tmp);
+    return (redir);
+}
+
+int pre_lexer(char *rl_str, t_list **list)
 {
     char *str;
     int i;
@@ -36,27 +62,19 @@ char *lexer(char *rl_str, t_envp *envp, t_list **list)
     if (lexer_errors(str))
     {   
         free(str);
-        return (NULL);
+        return (1);
     }
     while (str[++i])
     {
         if (str[i] == '\'')
         {
-            str = ft_single_quotes(str, &i);
-            if (!str)
-                break;
+            if (check_unclosed_quotes(str, &i, '\''))
+                return (1);
         }
         else if (str[i] == '\"')
         {
-            str = ft_double_quotes(str, &i, envp);
-            if (!str)
-                break;
-        }
-        if (str[i] == '$')
-        {
-            str = ft_dollar(str, &i, envp);
-            if (!str)
-                break;
+            if (check_unclosed_quotes(str, &i, '\"'))
+                return (1);
         }
         if (str[i] == '|')
         {
@@ -68,5 +86,44 @@ char *lexer(char *rl_str, t_envp *envp, t_list **list)
     }
     *list = create_list(*list, str, i, j);
     make_null_init(*list);
-    return (str);
+    free (str);
+    return (0);
+}
+//дописать разделение кмд и рдр
+
+void lexer(char *rl_str, t_envp *envp, t_list *list)
+{
+    int i;
+    int j;
+
+    i = -1;
+    j = 0;
+    while (list)
+    {
+        while (list->str[++i])
+        {
+            if (list->str[i] == '\'')
+            {
+                list->str = ft_single_quotes(list->str, &i);
+                if (!list->str)
+                    break;
+            }
+            else if (list->str[i] == '\"')
+            {
+                list->str = ft_double_quotes(list->str, &i, envp);
+                if (!list->str)
+                    break;
+            }
+            if (list->str[i] == '$')
+            {
+                list->str = ft_dollar(list->str, &i, envp);
+                if (!list->str)
+                    break;
+            }
+            if (list->str[i] == '>' || list->str[i] == '<')
+                list->str_redir = ft_redirect(list->str, &i, list->str_redir);
+        }
+        list = list->next;
+    }
+
 }

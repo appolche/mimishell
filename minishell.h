@@ -48,7 +48,8 @@ typedef struct s_list
 //my_part
 int shell_loop(t_data *data, t_envp *envp);
 
-char    *lexer(char *rl_str, t_envp *envp, t_list **list);
+int pre_lexer(char *rl_str, t_list **list);
+void    lexer(char *rl_str, t_envp *envp, t_list *list);
 
 char    *ft_single_quotes(char *str, int *i);
 char    *ft_double_quotes(char *str, int *i, t_envp *envp);
@@ -56,7 +57,7 @@ char    *ft_dollar(char *str, int *i, t_envp *envp);
 
 char    *cut_quotes(char *str, int start, int end);
 char    *cut_and_change_piece(char *str, int start, char *name, char *value);
-int     check_unclosed_quotes(int quote_pair, char *str);
+int     check_unclosed_quotes(char *str, int *i, int c);
 
 t_list  *create_list(t_list *list, char *str, int i, int j);
 t_list  *create_head(char *content);

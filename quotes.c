@@ -1,7 +1,18 @@
 #include "minishell.h"
 
-int check_unclosed_quotes(int quote_pair, char *str)
+int check_unclosed_quotes(char *str, int *i, int c)
 {
+    int     quote_pair;
+
+    quote_pair = 0;
+    while (str[++(*i)])
+    {
+        if (str[*i] == c)
+        {
+            quote_pair++;
+            break;
+        }
+    }
     if (quote_pair == 0)
     {
         free(str);
@@ -21,7 +32,6 @@ char *cut_quotes(char *str, int start, int end)
 
     tmp = ft_substr(str, 0, start);
     tmp2 = ft_substr(str, start + 1, end - start - 1); //проверка на пайп внутри кавычек
-    //tmp2 = check_pipes_in_quotes(tmp2);
     tmp3 = ft_substr(str, end + 1, ft_strlen(str) - end);
     if (!tmp || !tmp2 || !tmp3)
         return (NULL);
@@ -34,40 +44,13 @@ char *cut_quotes(char *str, int start, int end)
     return (tmp);
 }
 
-char    *ft_single_quotes(char *str, int *i) //добавить проверку на нечетные кавычки
-{
-    char    *str_new;
-    int     start;
-    int     quote_pair;
-
-    start = *i;
-    quote_pair = 0;
-    while (str[++(*i)])
-    {
-        if (str[*i] == '\'')
-        {
-            quote_pair++;
-            break;
-        }
-    }
-    if (check_unclosed_quotes(quote_pair, str))
-        return (NULL);
-    str_new = cut_quotes(str, start, *i);
-    if (!str_new)
-        return (NULL);
-    free(str);
-    (*i) -= 2;
-    return (str_new);
-}
 
 char    *ft_double_quotes(char *str, int *i, t_envp *envp)
 {
     char    *str_new;
     int     start;
-    int     quote_pair;
 
     start = *i;
-    quote_pair = 0;
     while (str[++(*i)])
     {
         if (str[*i] == '$')
@@ -76,14 +59,25 @@ char    *ft_double_quotes(char *str, int *i, t_envp *envp)
             if (!str)
                 return (NULL);
         }
-        if (str[*i] == '\"')
-        {
-            quote_pair++;
-            break;
-        }
     }
-    if (check_unclosed_quotes(quote_pair, str))
+    // if (check_unclosed_quotes(str, *i, '\"'))
+    //     return (NULL);
+    str_new = cut_quotes(str, start, *i);
+    if (!str_new)
         return (NULL);
+    free(str);
+    (*i) -= 2;
+    return (str_new);
+}
+
+char    *ft_single_quotes(char *str, int *i) //добавить проверку на нечетные кавычки
+{
+    char    *str_new;
+    int     start;
+
+    start = *i;
+    // if (check_unclosed_quotes(str, *i, '\''))
+    //     return (NULL);
     str_new = cut_quotes(str, start, *i);
     if (!str_new)
         return (NULL);

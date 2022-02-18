@@ -12,7 +12,7 @@ t_envp *init_t_envp(t_data *data, t_envp *envp) // инцилизация t_envp
             envp = ft_lstnew(tmp[0], tmp[1]);
         else
             push_back(tmp[0], tmp[1], envp);
-           free(tmp);
+        malloc_free(tmp);
         i++;
     }
     return (envp);
