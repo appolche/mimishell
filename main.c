@@ -1,9 +1,7 @@
 #include "minishell.h"
 /*
-вписать в лексер < >
-открывать их сразу? как дупать их в пайпах?
-ls | wc > file1 | ppwd
-привязать к конкретному листу/команде?
+shlvl=.... обрубить по равно и поменть env
+$?
 */
 
 void check_list_splitted_cmd_redir(t_list *list)
@@ -13,7 +11,7 @@ void check_list_splitted_cmd_redir(t_list *list)
     while (tmp)
     {
         k = -1;
-        if (tmp->redir)
+        if (tmp->cmd)
         {
         while (tmp->cmd[++k])
             printf("cmd: %d: %s\n", k, tmp->cmd[k]);
@@ -35,8 +33,8 @@ void check_list_splitted_str(t_list *list)
     while (tmp)
     {
         printf("list->str: %d: |%s|\n", k, tmp->str);
-        // printf("list->str: %d: |%s|\n", k, tmp->str_cmd);
-        printf("list->str: %d: |%s|\n", k, tmp->str_redir);
+        printf("list->str: %d: |%s|\n", k, tmp->str_cmd);
+        printf("list->str_redir: %d: |%s|\n", k, tmp->str_redir);
         k++;
         tmp = tmp->next;
     }
@@ -45,25 +43,26 @@ void check_list_splitted_str(t_list *list)
 int shell_loop(t_data *data, t_envp *envp)
 {
     t_list  *list;
-    // char    *str;
 
     while (1)
     {
         list = NULL;
         data->str = readline("minishell: ");
         if (data->str)
+        {
             add_history(data->str);
-        else if (data->str == NULL)
-            ft_exit(1);
-        if (pre_lexer(data->str, &list))
-            ft_exit(1);
-        lexer(data->str, envp, list);
-            //ft_exit(1); //должен вывести новую строчку | сделать ошибку только выделения памяти
-        //list_parse(list, data);
-        // if (!list)
+            split_for_list(ft_strtrim(data->str, " "), &list);
+        }
+        if (list)
+        {
+            parse_list(envp, list);
+            parse_each_node(list);
+        }
+        
+        //pipe_cmd_proc(list, envp)
         //     ft_exit(1); //должен вывести новую строчку | сделать ошибку только выделения памяти
-        check_list_splitted_str(list);
-        // check_list_splitted_cmd_redir(list);
+        // check_list_splitted_str(list);
+        //check_list_splitted_cmd_redir(list);
         if (list)
             free_list(&list);
         if (data->str)
@@ -87,7 +86,12 @@ int main(int argc, char **argv, char **env)
     envp = init_t_envp(data, envp);
     if (!envp)
         exit(2);
-    shell_loop(data, envp);
+        while(envp)
+        {
+            printf("%s\n", envp->name);
+            envp=envp->next;
+        }
+    //shell_loop(data, envp);
     ft_lstclear(&envp);
     free_env(data);
     free(data);

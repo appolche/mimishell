@@ -50,34 +50,6 @@ void ft_push_back(t_list *list, char *content)
     node->str = content;
 }
 
-// t_list *list_top(t_list *list)
-// {
-//     t_list *tmp;
-
-//     tmp = list;
-//     while (tmp->next)
-//     {
-//         tmp = tmp->next;
-//     }
-//     return (tmp);
-// }
-
-// int find_list_size(t_list *list)
-// {
-//     t_list *tmp;
-//     int size;
-
-//     tmp = list;
-//     size = 0;
-//     while (tmp->next)
-//     {
-//         size++;
-//         tmp = tmp->next;
-//     }
-//     return (size);
-// }
-
-
 void free_list(t_list **list)
 {
     t_list *tmp;

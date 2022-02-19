@@ -8,7 +8,7 @@ REBUILT_FUNCS = ./sanya_funcs/ft_cd.c \
 					./sanya_funcs/ft_pwd.c \
 					./sanya_funcs/ft_unset.c \
 
-SRC = main.c env_copy.c env_list_tools.c swap_val_list.c lexer.c quotes.c dollar.c parse_list.c list_tools.c $(REBUILT_FUNCS)
+SRC = main.c env_copy.c env_list_tools.c swap_val_list.c parser.c errors.c string_cutters.c quotes.c dollar.c list_tools.c $(REBUILT_FUNCS)
 
 OBJS = $(SRC:.c=.o)
 
@@ -23,7 +23,7 @@ all: $(NAME)
 
 $(NAME): $(OBJS) $(HEADER)
 	make -C $(LDIR)
-	clang -o $(NAME) $(FLAGS) $(OBJS) $(LFLAGS)
+	gcc -o $(NAME) $(FLAGS) $(OBJS) $(LFLAGS)
 
 clean:
 	make clean -C $(LDIR)

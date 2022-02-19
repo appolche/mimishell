@@ -1,29 +1,5 @@
 #include "minishell.h"
 
-char *cut_and_change_piece(char *str, int start, char *name, char *value) //мб убрать?
-{
-    char *tmp;
-    char *tmp2;
-    char *tmp3;
-    int  size;
-
-    size = 0;
-    size = ft_strlen(name) + 1;
-    tmp = ft_substr(str, 0, start);
-    tmp2 = ft_strdup(value);
-    tmp3 = ft_substr(str, start + size, ft_strlen(str) - start - size);
-    if (!tmp || !tmp2)
-        return (NULL);
-    tmp = ft_strjoin(tmp, tmp2);
-    if (!tmp)
-        return (NULL);
-    tmp = ft_strjoin(tmp, tmp3);
-    if (!tmp)
-        return (NULL);
-    free(str);
-    return (tmp);
-}
-
 char    *ft_dollar(char *str, int *i, t_envp *envp)
 {
     //должен вылетать при вводе направильной переменной без одинарных кавычек (при двойных тодже вылетает)

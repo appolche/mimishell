@@ -1,0 +1,22 @@
+< file1 //do nothing, jusut checks id this file is exist
+< file1 cmd //takes output of existing file and execute cmd in stdout
+
+> file (creates file, if file alredy exists - recreate it)
+> file1 cmd //create file, execute cmd in write it in file.
+
+grep "Home" < file2 < file //greps smth from the last file (named: file)
+
+cmd > file
+cat file > file2
+ls | wc > file > file2 //(create file, but not turns on anything, all info redirect in last file2)
+cat file file2 > file3 //объединяет два файла: file1, file2 в один файл file3
+cat > file1
+1
+2
+3
+result: file1 will contain 1 2 3
+
+
+
+<< LIMITER cmd (« opens heredoc till the stop-word and makes cmd for the heredoc stdin)
+cat >> file1 // add smth to file1
