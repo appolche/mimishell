@@ -7,7 +7,8 @@ void make_null_init(t_list *list)
         list->str_cmd = NULL;
         list->str_redir = NULL;
         list->cmd = NULL;
-        list->redir = NULL;
+        list->file_fd[0] = -1;
+        list->file_fd[1] = -1;
         list = list->next;
     }
 }
@@ -67,8 +68,6 @@ void free_list(t_list **list)
             free((*list)->str_redir);
         if ((*list)->cmd)
             malloc_free((*list)->cmd);
-        if ((*list)->redir)
-            malloc_free((*list)->redir);
         free(*list);
         *list = tmp;
     }

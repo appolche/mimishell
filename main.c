@@ -4,6 +4,15 @@ shlvl=.... обрубить по равно и поменть env
 $?
 */
 
+void check_envp_list(t_envp *envp)
+{
+    while (envp)
+    {
+        printf("%s\n", envp->value);
+        envp = envp->next;
+    }
+}
+
 void check_list_splitted_cmd_redir(t_list *list)
 { // //проверка
     t_list *tmp = list;
@@ -13,14 +22,13 @@ void check_list_splitted_cmd_redir(t_list *list)
         k = -1;
         if (tmp->cmd)
         {
-        while (tmp->cmd[++k])
-            printf("cmd: %d: %s\n", k, tmp->cmd[k]);
+            while (tmp->cmd[++k])
+                printf("cmd: %d: %s\n", k, tmp->cmd[k]);
         }
         k = -1;
-        if (tmp->redir)
+        if (tmp->str_redir)
         {
-            while (tmp->redir[++k])
-                printf("red: %d: %s\n", k, tmp->redir[k]);
+                printf("red: %d: %s\n", ++k, tmp->str_redir);
         }
         tmp = tmp->next;
     }
@@ -42,7 +50,7 @@ void check_list_splitted_str(t_list *list)
 
 int shell_loop(t_data *data, t_envp *envp)
 {
-    t_list  *list;
+    t_list *list;
 
     while (1)
     {
@@ -58,11 +66,11 @@ int shell_loop(t_data *data, t_envp *envp)
             parse_list(envp, list);
             parse_each_node(list);
         }
-        
-        //pipe_cmd_proc(list, envp)
-        //     ft_exit(1); //должен вывести новую строчку | сделать ошибку только выделения памяти
-        // check_list_splitted_str(list);
-        //check_list_splitted_cmd_redir(list);
+
+        // pipe_cmd_proc(list, envp)
+        //      ft_exit(1); //должен вывести новую строчку | сделать ошибку только выделения памяти
+        //  check_list_splitted_str(list);
+        check_list_splitted_cmd_redir(list);
         if (list)
             free_list(&list);
         if (data->str)
@@ -82,16 +90,12 @@ int main(int argc, char **argv, char **env)
 
     if (env_copy(data, env) == 1)
         return (1);
-    envp = NULL; 
-    envp = init_t_envp(data, envp);
+    envp = NULL;
+    init_t_envp(data, &envp);
     if (!envp)
         exit(2);
-        while(envp)
-        {
-            printf("%s\n", envp->name);
-            envp=envp->next;
-        }
-    //shell_loop(data, envp);
+    // check_envp_list(envp);
+    shell_loop(data, envp);
     ft_lstclear(&envp);
     free_env(data);
     free(data);

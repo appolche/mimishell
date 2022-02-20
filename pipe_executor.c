@@ -1,5 +1,26 @@
 #include "minishell.h"
 
+
+// static void	exec_my_command(t_main *main, t_commands *command)
+// {
+// 	if (!ft_strcmp(command->cmd[0], "echo"))
+// 		main->exit_code = ft_echo(ft_mass_size(command->cmd), command->cmd);
+// 	else if (!ft_strcmp(command->cmd[0], "env"))
+// 		main->exit_code = ft_env(main);
+// 	else if (!ft_strcmp(command->cmd[0], "pwd"))
+// 		main->exit_code = ft_pwd(main);
+// 	else if (!ft_strcmp(command->cmd[0], "export"))
+// 		main->exit_code = ft_export(main, command);
+// 	else if (!ft_strcmp(command->cmd[0], "unset"))
+// 		main->exit_code = ft_unset(main, command);
+// 	else if (!ft_strcmp(command->cmd[0], "cd"))
+// 		main->exit_code = ft_cd(main, command);
+// 	else if (!ft_strcmp(command->cmd[0], "exit"))
+// 		ft_exit(main, command);
+// 	if (main->exit_code != 0)
+// 		main->flag_exit = 1;
+// }
+
 void show_error(char *message)
 {
 	ft_putstr_fd(message, 2);
@@ -18,7 +39,7 @@ void absolute_path_exec(char **cmd, char **envp)
 	ft_putstr_fd("Error: Path not found\n", 2);
 }
 
-void path_search(char **path, char **cmd, char **envp)
+void path_search(char **path, char **cmd, t_envp *envp)
 {
 	char *final_path;
 	char *tmp;
@@ -34,7 +55,7 @@ void path_search(char **path, char **cmd, char **envp)
 		if (access(final_path, X_OK) == 0)
 		{
 			//printf("path: %s accessed\n", final_path);
-			if (execve(final_path, cmd, envp) == -1)
+			if (execve(final_path, cmd, envp) == -1) ///// ЖДУ ОТ САШИ Ф-ЦИЮ ДЛЯ ДВУМЕРНОГО МАССИВА envp
 			{
 				malloc_free(path);
 				// malloc_free(cmd);
@@ -65,25 +86,14 @@ void ft_exec(char **cmd, t_envp *envp)
 
 	while (envp)
 	{
-		if ((ft_strnstr(envp->name, "PATH=", 5)))
+		if ((ft_strnstr(envp->name, "PATH", 4)))
 		{
-			path = ft_split(envp[i], ':');
+			path = ft_split(envp->value, ':');
 			if (!path)
 				exit(1);
 			break;
 		}
 		envp = envp->next;
-	}
-	while (envp[i])
-	{
-		if ((ft_strnstr(envp[i], "PATH=", 5)))
-		{
-			path = ft_split(envp[i], ':');
-			if (!path)
-				exit(1);
-			break;
-		}
-		i++;
 	}
 	if (path)
 		path_search(path, cmd, envp);

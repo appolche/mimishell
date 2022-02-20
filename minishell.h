@@ -42,8 +42,10 @@ typedef struct s_list
     char *str_cmd;
     char *str_redir;
     char **cmd;
-    char **redir;
+    int file_fd[2];
 }   t_list;
+
+//t_data data;
 
 //my_part
 int shell_loop(t_data *data, t_envp *envp);
@@ -88,7 +90,7 @@ void free_list(t_list **list);
 
 //sanya_part
 int env_copy(t_data *data, char **env);
-t_envp *init_t_envp(t_data *data, t_envp *envp);
+void init_t_envp(t_data *data, t_envp **envp);
 
 t_envp *ft_lstnew(char *name, char *value);
 void push_back(char *name, char *value, t_envp *check);

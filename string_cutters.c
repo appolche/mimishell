@@ -21,6 +21,7 @@ char *split_cmd_redir(t_list *list, char *str, int i)
     int start;
     int len;
     char *tmp;
+    char *tmp2;
     char *new_str;
 
     start = i;
@@ -31,19 +32,31 @@ char *split_cmd_redir(t_list *list, char *str, int i)
         i++;
     while (str[i])
     {
+        if (str[i] == '\'')
+        {
+            if (check_unclosed_quotes(str, &i, '\''))
+                return (NULL);
+        }
+        else if (str[i] == '\"')
+        {
+            if (check_unclosed_quotes(str, &i, '\"'))
+                return (NULL);
+        }
         if (str[i] == ' ')
             break;
         i++;
     }
     tmp = ft_substr(str, start, i - start);
+    tmp2 = ft_strdup(tmp);
     if (!list->str_redir)
         list->str_redir = tmp;
     else
         list->str_redir = ft_strjoin(list->str_redir, tmp);
-    new_str = cut_cmd_piece(str, start, i, ft_strlen(tmp));
+    new_str = cut_cmd_piece(str, start, i, ft_strlen(tmp2));
     if (!new_str)
         return (NULL);
     free(str);
+    free(tmp2);
     return (new_str);
 }
 

@@ -20,3 +20,20 @@ result: file1 will contain 1 2 3
 
 << LIMITER cmd (« opens heredoc till the stop-word and makes cmd for the heredoc stdin)
 cat >> file1 // add smth to file1
+
+bash-3.2$ ls file1
+file1
+bash-3.2$ ls <> file1
+Makefile                errors.o                mimishell.dSYM          redirs
+dollar.c                file1                   minishell.h             sanya_funcs
+dollar.o                libft                   parser.c                string_cutters.c
+env_copy.c              list_tools.c            parser.o                string_cutters.o
+env_copy.o              list_tools.o            pipe_executor.c         swap_val_list.c
+env_list_tools.c        main.c                  quotes.c                swap_val_list.o
+env_list_tools.o        main.o                  quotes.o                testiki
+errors.c                mimishell               readline
+
+bash-3.2$ pwd <> file1 //ignore file and redirs
+/Users/dleaves/Desktop/git_mimi
+bash-3.2$ cat <> file1 //cats file1 ignoring redirs
+Hellloo

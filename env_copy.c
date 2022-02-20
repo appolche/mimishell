@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-t_envp *init_t_envp(t_data *data, t_envp *envp) // инцилизация t_envp
+void init_t_envp(t_data *data, t_envp **envp) // инцилизация t_envp
 {
     int i = 0;
     char **tmp;
@@ -8,14 +8,13 @@ t_envp *init_t_envp(t_data *data, t_envp *envp) // инцилизация t_envp
     while (data->env[i])
     {
         tmp = ft_split(data->env[i], '=');
-        if (envp == NULL)
-            envp = ft_lstnew(tmp[0], tmp[1]);
+        if (*envp == NULL)
+            *envp = ft_lstnew(tmp[0], tmp[1]);
         else
-            push_back(tmp[0], tmp[1], envp);
-        malloc_free(tmp);
+            push_back(tmp[0], tmp[1], *envp);
+        free(tmp);
         i++;
     }
-    return (envp);
 }
 
 int env_copy(t_data *data, char **env)

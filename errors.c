@@ -19,6 +19,12 @@ int syntax_errors(char *str)
             free(str);
             return (1);
         }
+        else if ((str[i] == '>' || str[i] == '<') && str[i + 1] == '|')
+        {
+            printf("minishell: syntax error near unexpected token `|'\n");
+            free(str);
+            return (1);
+        }
     }
     return (0);
 }
@@ -50,6 +56,11 @@ int redir_syntax_errors(char *str)
                 printf("minishell: syntax error near unexpected token `>>'\n");
                 return (1);
             }
+            else if (str[i] == ' ' && str[i + 1] == '>')
+            {
+                printf("minishell: syntax error near unexpected token `>'\n");
+                return (1);
+            }
         }
         else if (str[i] == '<')
         {
@@ -66,6 +77,11 @@ int redir_syntax_errors(char *str)
             else if (c >= 2 && str[i] == '>')
             {
                 printf("minishell: syntax error near unexpected token `>'\n");
+                return (1);
+            }
+            else if (str[i] == ' ' && str[i + 1] == '<')
+            {
+                printf("minishell: syntax error near unexpected token `<'\n");
                 return (1);
             }
         }
