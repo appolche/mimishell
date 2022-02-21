@@ -64,6 +64,7 @@ int redir_syntax_errors(char *str)
         }
         else if (str[i] == '<')
         {
+            c = 0;
             while (str[i] == '<')
             {
                 c++;

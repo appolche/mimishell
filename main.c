@@ -66,8 +66,9 @@ int shell_loop(t_data *data, t_envp *envp)
             parse_list(envp, list);
             parse_each_node(list);
         }
-
-        // pipe_cmd_proc(list, envp)
+        parse_redirect(list);
+        // ft_array_envp(envp, &data);
+        // pipe_cmd_proc(list, data->env);
         //      ft_exit(1); //должен вывести новую строчку | сделать ошибку только выделения памяти
         //  check_list_splitted_str(list);
         check_list_splitted_cmd_redir(list);

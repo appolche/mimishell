@@ -45,7 +45,7 @@ typedef struct s_list
     int file_fd[2];
 }   t_list;
 
-//t_data data;
+t_data data;
 
 //my_part
 int shell_loop(t_data *data, t_envp *envp);
@@ -66,7 +66,6 @@ char    *ft_single_quotes(char *str, int *i);
 char    *ft_double_quotes(char *str, int *i, t_envp *envp);
 char    *ft_dollar(char *str, int *i, t_envp *envp);
 
-
 int     check_unclosed_quotes(char *str, int *i, int c);
 
 t_list  *create_list(t_list *list, char *str, int i, int j);
@@ -81,11 +80,21 @@ void    cut_str_cmd(t_list *list, int start);
 char    *ft_substr_cpy(char *src, int *start, char c);
 void parse_each_node(t_list *list);
 
+void pipe_cmd_proc(t_list *list, char **envp);
+void pipe_proc(char **cmd, char **envp);
+void pipe_child_proc(char **cmd, char **envp, int pipe_fd[2]);
+void pipe_parent_proc(int pipe_fd[2], pid_t pid);
+void ft_exec(char **cmd, char **envp);
+void path_search(char **path, char **cmd, char **envp);
+void absolute_path_exec(char **cmd, char **envp);
+void show_error(char *message);
+
 char	**malloc_free(char **tab);
 void free_list(t_list **list);
 
 
-
+void parse_redirect(t_list *list);
+char *get_file_name(char *str, int i);
 
 
 //sanya_part
@@ -120,5 +129,9 @@ void del_head(t_envp **envp);
 void	ft_lstclear(t_envp **lst);
 void free_env(t_data *data);
 
+
+int ft_array_envp(t_envp *envp, t_data **data);
+char    *ft_strjoin2(char *s1, char *s2);
+int size_list(t_envp *envp);
 
 #endif
