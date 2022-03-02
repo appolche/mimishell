@@ -1,0 +1,36 @@
+redir_type: |> file1| 
+filename: || 
+Makefile
+dollar.c
+dollar.o
+env_copy.c
+env_copy.o
+env_list_tools.c
+env_list_tools.o
+errors.c
+errors.o
+file1
+libft
+list_tools.c
+list_tools.o
+main.c
+main.o
+mimishell
+minishell.h
+parser.c
+parser.o
+pipe_executor.c
+pipe_executor.o
+quotes.c
+quotes.o
+readline
+redirs
+sanya_funcs
+string_cutters.c
+string_cutters.o
+swap_val_list.c
+swap_val_list.o
+testiki
+minishell: /Users/19798462/Desktop/mimishell
+minishell: /Users/19798462/Desktop/mimishell
+minishell: 

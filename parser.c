@@ -10,16 +10,29 @@ void parse_each_node(t_list *list)
     }
 }
 
-
 //minishell: ls > "  fddddd   file1" > "   file2678" > "  |  file3   jj<>"
 // minishell: error: unclosed double quotes
 // minishell: ls > file1| <<file2<file3<file4 cat
 // minishell: syntax error near unexpected token `<<'
 // сделать обработку доллара в редиректе (раскрывает значение перемеенной и делает его filename)
 
+char *filename_in_quotes(char *str, int *i, int c)
+{
+    char *file_name;
+    int quote_start;
+
+    quote_start = *i;
+    while (str[++(*i)])
+    {
+        if (str[*i] == c)
+            break;
+    }
+    file_name = ft_substr(str, quote_start + 1, *i - quote_start - 1);
+    return (file_name);
+}
+
 char *get_file_name(char *str, int i, int *ret)
 {
-    // <
     char *file_name;
     int start;
     int quote_start;
@@ -28,25 +41,9 @@ char *get_file_name(char *str, int i, int *ret)
         i++;
     start = i;
     if (str[i] == '\'')
-    {
-        quote_start = i;
-        while (str[++i])
-        {
-            if (str[i] == '\'')
-                break;
-        }
-        file_name = ft_substr(str, quote_start + 1, i - quote_start - 1);
-    }
+        file_name = filename_in_quotes(str, &i, '\'');
     else if (str[i] == '\"')
-    {   
-        quote_start = i;
-        while (str[++i])
-        {
-            if (str[i] == '\"')
-                break;
-        }
-        file_name = ft_substr(str, quote_start + 1, i - quote_start - 1);
-    }
+        file_name = filename_in_quotes(str, &i, '\"');
     else
     {
         while (str[i])
@@ -76,22 +73,22 @@ void open_file(t_list *list, char *redir_type, char *file_name)
     int j;
 
     j = 0;
-    if (redir_type[j] == '<' && redir_type[j + 1] != '<') // read_only
-    {
-        list->file_fd[0] = open(file_name, O_RDONLY);
+    if (redir_type[j] == '>') 
+    {   
+        if (redir_type[j + 1] == '>') //дозапись
+            list->file_fd[1] = open(file_name, O_WRONLY | O_CREAT | O_APPEND, 0666);
+        else // rewrite
+            list->file_fd[1] = open(file_name, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+        dup2(list->file_fd[1], 1); //добавить проверки на open и dup;
     }
-    if (redir_type[j] == '>' && redir_type[j + 1] != '>') // rewrite
+    if (redir_type[j] == '<') 
     {
-        list->file_fd[1] = open(file_name, O_WRONLY | O_CREAT | O_TRUNC, 0666); //отделить названия файлов от редиректов
-    }
-    if (redir_type[j] == '<' && redir_type[j + 1] == '<') // heredoc
-    {
-        return ;
+        if (redir_type[j + 1] == '<') // heredoc
+            return ;
         // heredoc_mode(); // add heredoc func // стоп-слово сразу после редира
-    }
-    if (redir_type[j] == '>' && redir_type[j + 1] == '>') //дозапись
-    {
-        list->file_fd[1] = open(file_name, O_WRONLY | O_CREAT | O_APPEND, 0666);
+        else // read_only
+            list->file_fd[0] = open(file_name, O_RDONLY);
+        dup2(list->file_fd[0], 0);
     }
     if (redir_type)
     {

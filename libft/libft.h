@@ -5,6 +5,8 @@
 # include <unistd.h>
 
 int		ft_isalnum(int c);
+int     ft_isdigit(int c);
+int     ft_atoi(const char *str);
 char	**ft_split(char const *s, char c);
 int 	ft_strchr(char *s, int c);
 char	*ft_strdup(const char *s1);

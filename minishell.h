@@ -111,7 +111,7 @@ void    swap_list(t_envp *list);
 void ft_cd(t_envp *envp);
 void ft_echo(char *av, int flag);
 void ft_env(t_envp *envp);
-void ft_exit(int value);
+void ft_exit(char **av);
 
 void ft_export(t_envp *envp, char *name);
 t_envp *copy_envp(t_envp *envp, t_envp *sort);
