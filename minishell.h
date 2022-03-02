@@ -94,7 +94,7 @@ void free_list(t_list **list);
 
 
 void parse_redirect(t_list *list);
-char *get_file_name(char *str, int i);
+char *get_file_name(char *str, int i, int *ret);
 
 
 //sanya_part

@@ -23,7 +23,7 @@ all: $(NAME)
 
 $(NAME): $(OBJS) $(HEADER)
 	make -C $(LDIR)
-	gcc -o $(NAME) $(FLAGS) $(OBJS) $(LFLAGS)
+	clang -o $(NAME) $(FLAGS) $(OBJS) $(LFLAGS)
 
 clean:
 	make clean -C $(LDIR)

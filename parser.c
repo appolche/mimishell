@@ -16,87 +16,121 @@ void parse_each_node(t_list *list)
 // minishell: ls > file1| <<file2<file3<file4 cat
 // minishell: syntax error near unexpected token `<<'
 // сделать обработку доллара в редиректе (раскрывает значение перемеенной и делает его filename)
-char *get_file_name(char *str, int i)
+
+char *get_file_name(char *str, int i, int *ret)
 {
     // <
     char *file_name;
     int start;
     int quote_start;
 
-    while (str[i] && (str[i] == ' ' || str[i] == '>' || str[i] == '<')) // rewrite
+    while (str[i] && str[i] == ' ')
         i++;
     start = i;
-    // if (str[i] == '\'')
-    // {
-    //     quote_start = i;
-    //     check_unclosed_quotes(str, &i, '\'');
-    //     file_name = ft_substr(str, quote_start + 1, i - quote_start - 1);
-    // }
-    // else if (str[i] == '\"')
-    // {   
-    //     quote_start = i;
-    //     check_unclosed_quotes(str, &i, '\"');
-    //     file_name = ft_substr(str, quote_start + 1, i - quote_start - 1);
-    // }
-    // else
-    // {
+    if (str[i] == '\'')
+    {
+        quote_start = i;
+        while (str[++i])
+        {
+            if (str[i] == '\'')
+                break;
+        }
+        file_name = ft_substr(str, quote_start + 1, i - quote_start - 1);
+    }
+    else if (str[i] == '\"')
+    {   
+        quote_start = i;
+        while (str[++i])
+        {
+            if (str[i] == '\"')
+                break;
+        }
+        file_name = ft_substr(str, quote_start + 1, i - quote_start - 1);
+    }
+    else
+    {
         while (str[i])
         {
-            if (str[i] == ' ' || str[i] == '>' || str[i] == '<')
+            if (str[i] == ' ' || str[i] == '>' || str[i] == '<' || str[i] == '\'' || str[i] == '\"')
                 break ;
-            
-            (i)++;
+            i++;
         }
         file_name = ft_substr(str, start, i - start);
-    // }
+    }
+    *ret = i;
     return (file_name);
+}
+
+/*
+идем по строке
+встречаем <> (проверяем кавычки, только пропуская содержимое)
+запоминаем вид редиректа
+запоминаем имя
+отправляем имя и вид редиректа на исполнение
+записываем открытый фд в лист
+идем дальше по строке
+если встречаем новый редирект, то закрываем старый фд и перезаписываем fd
+*/
+void open_file(t_list *list, char *redir_type, char *file_name)
+{
+    int j;
+
+    j = 0;
+    if (redir_type[j] == '<' && redir_type[j + 1] != '<') // read_only
+    {
+        list->file_fd[0] = open(file_name, O_RDONLY);
+    }
+    if (redir_type[j] == '>' && redir_type[j + 1] != '>') // rewrite
+    {
+        list->file_fd[1] = open(file_name, O_WRONLY | O_CREAT | O_TRUNC, 0666); //отделить названия файлов от редиректов
+    }
+    if (redir_type[j] == '<' && redir_type[j + 1] == '<') // heredoc
+    {
+        return ;
+        // heredoc_mode(); // add heredoc func // стоп-слово сразу после редира
+    }
+    if (redir_type[j] == '>' && redir_type[j + 1] == '>') //дозапись
+    {
+        list->file_fd[1] = open(file_name, O_WRONLY | O_CREAT | O_APPEND, 0666);
+    }
+    if (redir_type)
+    {
+        free(redir_type);
+        redir_type = NULL;
+    }
+    if (file_name)
+    {
+        free(file_name);
+        file_name = NULL;
+    }
 }
 
 void parse_redirect(t_list *list)
 {
     int i;
+    char *str;
     char *file_name;
+    char *redir_type;
 
     file_name = NULL;
+    redir_type = NULL;
     while (list)
     {
         i = -1;
-        while (list->str_redir[++i])
+        str = ft_strtrim(list->str_redir, " ");
+        //обработать несколько редиректов в одой строке (если str одной галкой не кончается) и зафришить стр не забыть
+        while (str[++i])
         {
-            if (list->str_redir[i] == '<' && list->str_redir[i + 1] != '<') // read_only
-            {
-                file_name = get_file_name(list->str_redir, i);
-                printf ("filename: |%s| \n", file_name);
-                i += ft_strlen(file_name);
-                // list->file_fd[0] = open(file_name, O_RDONLY);
-            }
-            if (list->str_redir[i] == '>' && list->str_redir[i + 1] != '>') // rewrite
-            {
-                file_name = get_file_name(list->str_redir, i);
-                printf ("filename: |%s| \n", file_name);
-                i += ft_strlen(file_name);
-                // list->file_fd[1] = open(file_name, O_WRONLY | O_CREAT | O_TRUNC, 0666); //отделить названия файлов от редиректов
-            }
-            if (list->str_redir[i] == '<' && list->str_redir[i + 1] == '<') // heredoc
-            {
-                file_name = get_file_name(list->str_redir, i);
-                printf ("filename: |%s| \n", file_name);
-                i += ft_strlen(file_name);
-                // heredoc_mode(); // add heredoc func // стоп-слово сразу после редира
-            }
-            if (list->str_redir[i] == '>' && list->str_redir[i + 1] == '>') //дозапись
-            {
-                file_name = get_file_name(list->str_redir, i);
-                printf ("filename: |%s| \n", file_name);
-                i += ft_strlen(file_name);
-                // list->file_fd[1] = open(file_name, O_WRONLY | O_CREAT | O_APPEND, 0666);
-            }
-            if (file_name)
-            {
-                free(file_name);
-                file_name = NULL;
-            }
+            while (str[i] && (str[i] == '<' || str[i] == '>'))
+                i++;
+            redir_type = ft_substr(str, 0, i);
+            printf ("redir_type: |%s| \n", redir_type);
+            file_name = get_file_name(str, i, &i);
+            printf ("filename: |%s| \n", file_name);
+            open_file(list, redir_type, file_name); // открывает нужные дескрипт и запоминает их в лист | как передать нужную ноду?
+            //нужна проверка для перезаписи дескрипторов
         }
+        free(str);
         list = list->next;
     }
 }
@@ -108,7 +142,7 @@ void parse_list(t_envp *envp, t_list *list)
     while (list)
     {
         if (redir_syntax_errors(list->str))
-            return;
+            return ;
         list->str_cmd = ft_strtrim(list->str, " ");
         i = -1;
         while (list->str_cmd[++i])
@@ -146,12 +180,12 @@ void split_for_list(char *str, t_list **list)
         if (str[i] == '\'')
         {
             if (check_unclosed_quotes(str, &i, '\''))
-                return;
+                return ;
         }
         else if (str[i] == '\"')
         {
             if (check_unclosed_quotes(str, &i, '\"'))
-                return;
+                return ;
         }
         if (str[i] == '|')
         {
