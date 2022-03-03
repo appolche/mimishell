@@ -2,11 +2,15 @@
 
 void ft_echo(char *av, int flag)
 {
-    if(flag == 1)
+    if (flag == 1)
         printf("%s", av);
-    else if(!av)
+    else if (!av)
         printf("\n");
     else
         printf("%s\n", av);
     //$? = 0;
 }
+
+//echo
+//-n-n-n-n
+//argument

@@ -81,3 +81,6 @@ void ft_export(t_envp *envp, char *name)
     sort = struct_head(sort);
     ft_lstclear(&sort);
 }
+
+// dleaves@dleaves42:~/projects/git-mimi-01-03$ export abc 111
+// bash: export: `111': not a valid identifier

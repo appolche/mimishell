@@ -1,24 +1,30 @@
 #include "minishell.h"
 
-// static void	exec_my_command(t_main *main, t_commands *command)
-// {
-// 	if (!ft_strcmp(command->cmd[0], "echo"))
-// 		main->exit_code = ft_echo(ft_mass_size(command->cmd), command->cmd);
-// 	else if (!ft_strcmp(command->cmd[0], "env"))
-// 		main->exit_code = ft_env(main);
-// 	else if (!ft_strcmp(command->cmd[0], "pwd"))
-// 		main->exit_code = ft_pwd(main);
-// 	else if (!ft_strcmp(command->cmd[0], "export"))
-// 		main->exit_code = ft_export(main, command);
-// 	else if (!ft_strcmp(command->cmd[0], "unset"))
-// 		main->exit_code = ft_unset(main, command);
-// 	else if (!ft_strcmp(command->cmd[0], "cd"))
-// 		main->exit_code = ft_cd(main, command);
-// 	else if (!ft_strcmp(command->cmd[0], "exit"))
-// 		ft_exit(main, command);
-// 	if (main->exit_code != 0)
-// 		main->flag_exit = 1;
-// }
+static void	exec_my_cmd(t_data *data, t_list *list)
+{
+	if (!ft_strcmp(list->cmd[0], "echo"))
+		ft_echo(list->cmd);
+	else if (!ft_strcmp(list->cmd[0], "env"))
+		ft_env(list->cmd, data->envp);
+	else if (!ft_strcmp(list->cmd[0], "pwd"))
+		ft_pwd();
+	else if (!ft_strcmp(list->cmd[0], "export"))
+		ft_export(list->cmd);
+	else if (!ft_strcmp(list->cmd[0], "unset"))
+		ft_unset(list->cmd);
+	else if (!ft_strcmp(list->cmd[0], "cd"))
+		ft_cd(list->cmd);
+	else if (!ft_strcmp(list->cmd[0], "exit"))
+		ft_exit(list->cmd);
+}
+
+void redirect_fd(t_list *list)
+{
+    if (list->file_fd[0] != -1)
+        dup2(list->file_fd[0], 0);
+    if (list->file_fd[1] != -1)
+        dup2(list->file_fd[1], 1); //добавить проверки на dup;
+}
 
 void show_error(char *message)
 {
@@ -105,15 +111,16 @@ void pipe_parent_proc(int pipe_fd[2], pid_t pid)
 	waitpid(pid, NULL, 0);
 }
 
-void pipe_child_proc(char **cmd, char **envp, int pipe_fd[2])
+void pipe_child_proc(t_list *list, char **cmd, char **envp, int pipe_fd[2])
 {
 	close(pipe_fd[0]);
 	dup2(pipe_fd[1], 1);
 	close(pipe_fd[1]);
+	redirect_fd(list);
 	ft_exec(cmd, envp);
 }
 
-void pipe_proc(char **cmd, char **envp)
+void pipe_proc(t_list *list, char **cmd, char **envp)
 {
 	pid_t pid;
 	int pipe_fd[2];
@@ -124,10 +131,11 @@ void pipe_proc(char **cmd, char **envp)
 	if (pid == -1)
 		show_error("Error: Fork\n");
 	if (pid == 0)
-		pipe_child_proc(cmd, envp, pipe_fd);
+		pipe_child_proc(list, cmd, envp, pipe_fd);
 	else
 		pipe_parent_proc(pipe_fd, pid);
 }
+
 
 void pipe_cmd_proc(t_list *list, char **envp)
 {
@@ -142,9 +150,10 @@ void pipe_cmd_proc(t_list *list, char **envp)
 	{
 		while (tmp->next)
 		{
-			pipe_proc(tmp->cmd, envp);
+			pipe_proc(tmp, tmp->cmd, envp);
 			tmp = tmp->next;
 		}
+		redirect_fd(tmp);
 		ft_exec(tmp->cmd, envp);
 	}
 	else

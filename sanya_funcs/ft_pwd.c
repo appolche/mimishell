@@ -1,6 +1,6 @@
 #include "../minishell.h"
 
-void ft_pwd(void) // передать струкруру в которой храниться история, и $?(сделать ее глабальной)
+void ft_pwd(void)
 {
     char *tmp;
     tmp = getcwd(NULL, 0);

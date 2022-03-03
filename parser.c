@@ -68,6 +68,9 @@ char *get_file_name(char *str, int i, int *ret)
 идем дальше по строке
 если встречаем новый редирект, то закрываем старый фд и перезаписываем fd
 */
+
+
+
 void open_file(t_list *list, char *redir_type, char *file_name)
 {
     int j;
@@ -79,17 +82,16 @@ void open_file(t_list *list, char *redir_type, char *file_name)
             list->file_fd[1] = open(file_name, O_WRONLY | O_CREAT | O_APPEND, 0666);
         else // rewrite
             list->file_fd[1] = open(file_name, O_WRONLY | O_CREAT | O_TRUNC, 0666);
-        dup2(list->file_fd[1], 1); //добавить проверки на open и dup;
     }
-    if (redir_type[j] == '<') 
+    else if (redir_type[j] == '<') 
     {
         if (redir_type[j + 1] == '<') // heredoc
             return ;
         // heredoc_mode(); // add heredoc func // стоп-слово сразу после редира
         else // read_only
             list->file_fd[0] = open(file_name, O_RDONLY);
-        dup2(list->file_fd[0], 0);
     }
+    //добавить проверки на open
     if (redir_type)
     {
         free(redir_type);
@@ -111,12 +113,14 @@ void parse_redirect(t_list *list)
 
     file_name = NULL;
     redir_type = NULL;
+    str = NULL;
     while (list)
     {
-        i = -1;
+        i = 0;
         str = ft_strtrim(list->str_redir, " ");
+        printf ("trimmed_str_redir: |%s| \n", str);
         //обработать несколько редиректов в одой строке (если str одной галкой не кончается) и зафришить стр не забыть
-        while (str[++i])
+        while (str[i])
         {
             while (str[i] && (str[i] == '<' || str[i] == '>'))
                 i++;
@@ -128,6 +132,7 @@ void parse_redirect(t_list *list)
             //нужна проверка для перезаписи дескрипторов
         }
         free(str);
+        str = NULL;
         list = list->next;
     }
 }

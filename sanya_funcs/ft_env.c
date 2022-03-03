@@ -16,3 +16,7 @@ void ft_env(t_envp *envp)
         } 
     }   
 }
+
+// провекра на корректные аргументы
+// dleaves@dleaves42:~/projects/git-mimi-01-03$ env fdkh
+// env: ‘fdkh’: No such file or directory

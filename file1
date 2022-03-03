@@ -1,6 +1,3 @@
-redir_type: |> file1| 
-filename: || 
-Makefile
 dollar.c
 dollar.o
 env_copy.c
@@ -10,11 +7,13 @@ env_list_tools.o
 errors.c
 errors.o
 file1
+file2
 libft
 list_tools.c
 list_tools.o
 main.c
 main.o
+Makefile
 mimishell
 minishell.h
 parser.c
@@ -31,6 +30,3 @@ string_cutters.o
 swap_val_list.c
 swap_val_list.o
 testiki
-minishell: /Users/19798462/Desktop/mimishell
-minishell: /Users/19798462/Desktop/mimishell
-minishell: 
