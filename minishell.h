@@ -24,7 +24,7 @@ typedef struct s_data
 {
     char *str;
     char **env;
-    struct sigaction	sigac;
+    // struct sigaction	sigac;
     int exit_status;
     // t_envp;
 }   t_data;
@@ -94,11 +94,15 @@ void path_search(char **path, char **cmd, char **envp);
 void absolute_path_exec(char **cmd, char **envp);
 void show_error(char *message);
 
+void	here_doc_mode(char *limiter);
+void	here_doc_child(int pipe_fd[2], char *limiter);
+
+
 char	**malloc_free(char **tab);
 void free_list(t_list **list);
 
 
-void parse_redirect(t_list *list);
+void parse_redirect(t_list *list, char *str_redir);
 char *get_file_name(char *str, int i, int *ret);
 
 
@@ -113,7 +117,7 @@ t_envp *struct_head (t_envp *envp);
 void    swap_list(t_envp *list);
 
 
-void ft_cd(t_envp *envp);
+void ft_cd(t_envp *envp, char *command);
 void ft_echo(char *av, int flag);
 void ft_env(t_envp *envp);
 void ft_exit(char **av);

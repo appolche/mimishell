@@ -1,22 +1,22 @@
 #include "minishell.h"
 
-static void	exec_my_cmd(t_data *data, t_list *list)
-{
-	if (!ft_strcmp(list->cmd[0], "echo"))
-		ft_echo(list->cmd);
-	else if (!ft_strcmp(list->cmd[0], "env"))
-		ft_env(list->cmd, data->envp);
-	else if (!ft_strcmp(list->cmd[0], "pwd"))
-		ft_pwd();
-	else if (!ft_strcmp(list->cmd[0], "export"))
-		ft_export(list->cmd);
-	else if (!ft_strcmp(list->cmd[0], "unset"))
-		ft_unset(list->cmd);
-	else if (!ft_strcmp(list->cmd[0], "cd"))
-		ft_cd(list->cmd);
-	else if (!ft_strcmp(list->cmd[0], "exit"))
-		ft_exit(list->cmd);
-}
+// static void	exec_my_cmd(t_data *data, t_list *list)
+// {
+// 	if (!ft_strcmp(list->cmd[0], "echo"))
+// 		ft_echo(list->cmd);
+// 	else if (!ft_strcmp(list->cmd[0], "env"))
+// 		ft_env(list->cmd, data->envp);
+// 	else if (!ft_strcmp(list->cmd[0], "pwd"))
+// 		ft_pwd();
+// 	else if (!ft_strcmp(list->cmd[0], "export"))
+// 		ft_export(list->cmd);
+// 	else if (!ft_strcmp(list->cmd[0], "unset"))
+// 		ft_unset(list->cmd);
+// 	else if (!ft_strcmp(list->cmd[0], "cd"))
+// 		ft_cd(list->cmd);
+// 	else if (!ft_strcmp(list->cmd[0], "exit"))
+// 		ft_exit(list->cmd);
+// }
 
 void redirect_fd(t_list *list)
 {

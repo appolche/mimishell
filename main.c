@@ -56,18 +56,17 @@ int shell_loop(t_data *data, t_envp *envp)
     {
         list = NULL;
         data->str = readline("minishell: ");
-        if (data->str)
-        {
+        if (!data->str)
+            exit;
+        if (ft_strlen(data->str))
             add_history(data->str);
-            split_for_list(ft_strtrim(data->str, " "), &list);
-        }
+        split_for_list(ft_strtrim(data->str, " "), &list);
         if (list)
         {
             parse_list(envp, list);
             parse_each_node(list);
+            pipe_cmd_proc(list, data->env);
         }
-        parse_redirect(list);
-        pipe_cmd_proc(list, data->env);
 
         // ft_array_envp(envp, &data);
         //  check_list_splitted_str(list);

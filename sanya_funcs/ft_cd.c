@@ -21,7 +21,7 @@ char *cd_home(t_envp *envp)
         return (NULL);
     }
     tmp = home->value;
-    returm(tmp);
+    return (tmp);
 }
 
 void ft_cd(t_envp *envp, char *command) // добавить пременую команды, можно добавить сюда переменную о сообщении, или сделать их макросоми

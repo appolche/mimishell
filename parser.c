@@ -76,6 +76,10 @@ void open_file(t_list *list, char *redir_type, char *file_name)
     int j;
 
     j = 0;
+    if (list->file_fd[0] != -1)
+        close(list->file_fd[0]);
+    if (list->file_fd[1] != -1)
+        close(list->file_fd[1]);    
     if (redir_type[j] == '>') 
     {   
         if (redir_type[j + 1] == '>') //дозапись
@@ -86,10 +90,13 @@ void open_file(t_list *list, char *redir_type, char *file_name)
     else if (redir_type[j] == '<') 
     {
         if (redir_type[j + 1] == '<') // heredoc
-            return ;
-        // heredoc_mode(); // add heredoc func // стоп-слово сразу после редира
+            here_doc_mode(file_name);
         else // read_only
+        {
             list->file_fd[0] = open(file_name, O_RDONLY);
+            if (list->file_fd[0] == -1)
+                printf("minishell: %s: No such file or directory\n", file_name);
+        }
     }
     //добавить проверки на open
     if (redir_type)
@@ -104,7 +111,7 @@ void open_file(t_list *list, char *redir_type, char *file_name)
     }
 }
 
-void parse_redirect(t_list *list)
+void parse_redirect(t_list *list, char *str_redir)
 {
     int i;
     char *str;
@@ -114,27 +121,19 @@ void parse_redirect(t_list *list)
     file_name = NULL;
     redir_type = NULL;
     str = NULL;
-    while (list)
+    i = 0;
+    str = ft_strtrim(str_redir, " ");
+    //обработать несколько редиректов в одой строке (если str одной галкой не кончается) и зафришить стр не забыть
+    while (str[i])
     {
-        i = 0;
-        str = ft_strtrim(list->str_redir, " ");
-        printf ("trimmed_str_redir: |%s| \n", str);
-        //обработать несколько редиректов в одой строке (если str одной галкой не кончается) и зафришить стр не забыть
-        while (str[i])
-        {
-            while (str[i] && (str[i] == '<' || str[i] == '>'))
-                i++;
-            redir_type = ft_substr(str, 0, i);
-            printf ("redir_type: |%s| \n", redir_type);
-            file_name = get_file_name(str, i, &i);
-            printf ("filename: |%s| \n", file_name);
-            open_file(list, redir_type, file_name); // открывает нужные дескрипт и запоминает их в лист | как передать нужную ноду?
-            //нужна проверка для перезаписи дескрипторов
-        }
-        free(str);
-        str = NULL;
-        list = list->next;
+        while (str[i] && (str[i] == '<' || str[i] == '>'))
+            i++;
+        redir_type = ft_substr(str, 0, i);
+        file_name = get_file_name(str, i, &i);
+        open_file(list, redir_type, file_name);
     }
+    free(str);
+    str = NULL;
 }
 
 void parse_list(t_envp *envp, t_list *list)
@@ -158,6 +157,7 @@ void parse_list(t_envp *envp, t_list *list)
             if (list->str_cmd[i] == '>' || list->str_cmd[i] == '<')
             {
                 list->str_cmd = split_cmd_redir(list, list->str_cmd, i);
+                parse_redirect(list, list->str_redir);
                 i--;
             }
         }
@@ -172,11 +172,11 @@ void split_for_list(char *str, t_list **list)
 
     i = -1;
     j = 0;
-    if (syntax_errors(str))
-    {
-        free(str);
-        return;
-    }
+    // if (syntax_errors(str))
+    // {
+    //     free(str);
+    //     return;
+    // }
     while (str[++i])
     {
         if (str[i] == '\'')
