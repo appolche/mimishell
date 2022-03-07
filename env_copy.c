@@ -80,6 +80,7 @@ void init_t_envp(t_data *data, t_envp **envp) // инцилизация t_envp
         free(tmp);
         i++;
     }
+    data->envp = *envp; //мб не так
 }
 
 int env_copy(t_data *data, char **env)

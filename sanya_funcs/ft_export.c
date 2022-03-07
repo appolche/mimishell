@@ -1,8 +1,12 @@
 #include "../minishell.h"
 
+int    ft_isdigit_char(char c)
+{
+    return (c >= '0' && c <= '9');
+}
+
 void print_export(t_envp *list)
 {
-    printf("\n\n");
     while(list)
    {
         if(list->value == NULL)
@@ -45,11 +49,7 @@ t_envp *copy_envp(t_envp *envp, t_envp *sort)
     t_envp *tmp;
     char *name;
     char *value;
-    char *as;
-    char *as2;
 
-    as = ft_strdup("enddd");
-    as2 = ft_strdup("enddd");
     tmp = envp;
     sort = NULL;
     while (tmp)
@@ -65,12 +65,11 @@ t_envp *copy_envp(t_envp *envp, t_envp *sort)
             push_back(name, value, sort);
         tmp = tmp->next;
     }
-    push_back(as, as2, sort);
     sort = struct_head(sort);
     return (sort);
 }
 
-void ft_export(t_envp *envp, char *name)
+void ft_export_next_step(t_envp *envp, char *name)
 {
     t_envp *sort;
 
@@ -80,6 +79,35 @@ void ft_export(t_envp *envp, char *name)
     swap_list(sort);
     sort = struct_head(sort);
     ft_lstclear(&sort);
+    data->exit_status = 0;
+}
+
+void ft_export(t_envp *envp, char **argv)
+{
+    int i;
+    int j;
+
+    i = 0;
+    j = array_len(argv);
+    if(j > 1)
+    {
+        ft_export_next_step(envp, NULL);
+        return ;
+    }
+    while(argv[i])
+    {
+        if(ft_isdigit_char(argv[i][0]))
+        {
+            printf("minishell: export: `%s': not a valid identifier\n", argv[i]);
+            data->exit_status = 1;
+            return ;
+        }
+        i++;
+    }
+    i = 0;
+    while (argv[i])
+        ft_export_next_step(envp, argv[i++]);
+    return ;
 }
 
 // dleaves@dleaves42:~/projects/git-mimi-01-03$ export abc 111

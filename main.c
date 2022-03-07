@@ -57,7 +57,7 @@ int shell_loop(t_data *data, t_envp *envp)
         list = NULL;
         data->str = readline("minishell: ");
         if (!data->str)
-            exit;
+            exit(1);
         if (ft_strlen(data->str))
             add_history(data->str);
         split_for_list(ft_strtrim(data->str, " "), &list);

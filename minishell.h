@@ -26,7 +26,7 @@ typedef struct s_data
     char **env;
     // struct sigaction	sigac;
     int exit_status;
-    // t_envp;
+    struct s_envp *envp;
 }   t_data;
 
 typedef struct s_envp
@@ -48,9 +48,10 @@ typedef struct s_list
     char *str_redir;
     char **cmd;
     int file_fd[2];
+    int heredoc;
 }   t_list;
 
-t_data data;
+t_data *data;
 
 //my_part
 int shell_loop(t_data *data, t_envp *envp);
@@ -94,7 +95,7 @@ void path_search(char **path, char **cmd, char **envp);
 void absolute_path_exec(char **cmd, char **envp);
 void show_error(char *message);
 
-void	here_doc_mode(char *limiter);
+int	here_doc_mode(char *limiter);
 void	here_doc_child(int pipe_fd[2], char *limiter);
 
 
@@ -117,19 +118,32 @@ t_envp *struct_head (t_envp *envp);
 void    swap_list(t_envp *list);
 
 
-void ft_cd(t_envp *envp, char *command);
-void ft_echo(char *av, int flag);
-void ft_env(t_envp *envp);
-void ft_exit(char **av);
+void ft_cd(t_envp *envp, char **command);
+void ft_cd_next_step(t_envp *envp, char *command);
+char *cd_home(t_envp *envp);
 
-void ft_export(t_envp *envp, char *name);
+void ft_echo(char **av);
+void ft_echo_next_step(char *av, int flag);
+int check_flag(char *str);
+
+void ft_env(t_envp *envp, char **argv);
+void ft_env_next_step(t_envp *envp);
+
+void ft_exit(char **av);
+int array_len(char **av);
+
+void ft_export(t_envp *envp, char **argv);
+void ft_export_next_step(t_envp *envp, char *name);
 t_envp *copy_envp(t_envp *envp, t_envp *sort);
 t_envp	*export_new_name(t_envp *envp, char *name);
 void print_export(t_envp *list);
+int    ft_isdigit_char(char c);
 
-void ft_pwd(void);
+void ft_pwd(char **argv);
+void ft_pwd_print(void);
 
-void ft_unset(t_envp **envp, char *name);
+void ft_unset(t_envp **envp, char **name);
+void ft_unset_next_step(t_envp **envp, char *name);
 void delete_list(t_envp **list);
 void del_last_list(t_envp **envp);
 void del_list(t_envp **envp);

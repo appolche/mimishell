@@ -76,12 +76,12 @@ void open_file(t_list *list, char *redir_type, char *file_name)
     int j;
 
     j = 0;
-    if (list->file_fd[0] != -1)
-        close(list->file_fd[0]);
-    if (list->file_fd[1] != -1)
-        close(list->file_fd[1]);    
+    
+    
     if (redir_type[j] == '>') 
     {   
+        if (list->file_fd[1] != -1)
+            close(list->file_fd[1]);    
         if (redir_type[j + 1] == '>') //дозапись
             list->file_fd[1] = open(file_name, O_WRONLY | O_CREAT | O_APPEND, 0666);
         else // rewrite
@@ -89,8 +89,10 @@ void open_file(t_list *list, char *redir_type, char *file_name)
     }
     else if (redir_type[j] == '<') 
     {
+        if (list->file_fd[0] != -1)
+            close(list->file_fd[0]);
         if (redir_type[j + 1] == '<') // heredoc
-            here_doc_mode(file_name);
+            list->file_fd[0] = here_doc_mode(file_name);
         else // read_only
         {
             list->file_fd[0] = open(file_name, O_RDONLY);
@@ -114,6 +116,8 @@ void open_file(t_list *list, char *redir_type, char *file_name)
 void parse_redirect(t_list *list, char *str_redir)
 {
     int i;
+    int j;
+    int count;
     char *str;
     char *file_name;
     char *redir_type;
@@ -122,14 +126,23 @@ void parse_redirect(t_list *list, char *str_redir)
     redir_type = NULL;
     str = NULL;
     i = 0;
+    j = 0;
     str = ft_strtrim(str_redir, " ");
+    // printf("str: %s\n", str);
     //обработать несколько редиректов в одой строке (если str одной галкой не кончается) и зафришить стр не забыть
     while (str[i])
     {
+        count = 0;
+        j = i;
         while (str[i] && (str[i] == '<' || str[i] == '>'))
+        {
             i++;
-        redir_type = ft_substr(str, 0, i);
+            count++;
+        }
+        redir_type = ft_substr(str, j, count);
+    // printf("redir_type: %s\n", redir_type);
         file_name = get_file_name(str, i, &i);
+    // printf("file_name: %s\n", file_name);
         open_file(list, redir_type, file_name);
     }
     free(str);
@@ -157,10 +170,10 @@ void parse_list(t_envp *envp, t_list *list)
             if (list->str_cmd[i] == '>' || list->str_cmd[i] == '<')
             {
                 list->str_cmd = split_cmd_redir(list, list->str_cmd, i);
-                parse_redirect(list, list->str_redir);
                 i--;
             }
         }
+        parse_redirect(list, list->str_redir);
         list = list->next;
     }
 }

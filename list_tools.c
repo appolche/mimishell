@@ -9,6 +9,7 @@ void make_null_init(t_list *list)
         list->cmd = NULL;
         list->file_fd[0] = -1;
         list->file_fd[1] = -1;
+        list->heredoc = -1;
         list = list->next;
     }
 }

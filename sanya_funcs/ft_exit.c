@@ -8,7 +8,7 @@ int        ft_strcheck(const char *s1, const char s2)
     while (*p1)
     {
         if(*p1 == s2)
-            return(1);
+            return (1);
         ++p1;
     }
     return (0);
@@ -74,6 +74,8 @@ int array_len(char **av)
     int i;
 
     i = 0;
+    if(!av[1])
+        return (0);
     while (av[i])
         i++;
     return (i);
@@ -82,7 +84,7 @@ int array_len(char **av)
 void ft_out(int value, int flag, char *av)
 {
     // rl_clear_history();
-    data.exit_status = (unsigned char)value;
+    data->exit_status = (unsigned char)value;
     printf("exit\n");
     if(flag == 1)
         printf("bash: exit: %s: numeric argument required\n", av);
@@ -109,7 +111,7 @@ void ft_exit(char **av)
     {
         printf("bash: syntax error near unexpected token `%s'\n", str);
         free(str);
-        data.exit_status = 258;
+        data->exit_status = 258;
         return ;
     }
     if(i > 1)

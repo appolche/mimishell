@@ -1,22 +1,25 @@
 #include "minishell.h"
 
-// static void	exec_my_cmd(t_data *data, t_list *list)
-// {
-// 	if (!ft_strcmp(list->cmd[0], "echo"))
-// 		ft_echo(list->cmd);
-// 	else if (!ft_strcmp(list->cmd[0], "env"))
-// 		ft_env(list->cmd, data->envp);
-// 	else if (!ft_strcmp(list->cmd[0], "pwd"))
-// 		ft_pwd();
-// 	else if (!ft_strcmp(list->cmd[0], "export"))
-// 		ft_export(list->cmd);
-// 	else if (!ft_strcmp(list->cmd[0], "unset"))
-// 		ft_unset(list->cmd);
-// 	else if (!ft_strcmp(list->cmd[0], "cd"))
-// 		ft_cd(list->cmd);
-// 	else if (!ft_strcmp(list->cmd[0], "exit"))
-// 		ft_exit(list->cmd);
-// }
+int	exec_my_cmd(t_data *data, t_list *list)
+{
+	if (!ft_strcmp(list->cmd[0], "echo"))
+		ft_echo(list->cmd);
+	else if (!ft_strcmp(list->cmd[0], "env"))
+		ft_env(data->envp, list->cmd);
+	else if (!ft_strcmp(list->cmd[0], "pwd"))
+		ft_pwd(list->cmd);
+	else if (!ft_strcmp(list->cmd[0], "export"))
+		ft_export(data->envp, list->cmd);
+	else if (!ft_strcmp(list->cmd[0], "unset"))
+		ft_unset(&data->envp, list->cmd);
+	else if (!ft_strcmp(list->cmd[0], "cd"))
+		ft_cd(data->envp, list->cmd);
+	else if (!ft_strcmp(list->cmd[0], "exit"))
+		ft_exit(list->cmd);
+	else 
+		return (0);
+	return (1);
+}
 
 void redirect_fd(t_list *list)
 {
@@ -117,7 +120,8 @@ void pipe_child_proc(t_list *list, char **cmd, char **envp, int pipe_fd[2])
 	dup2(pipe_fd[1], 1);
 	close(pipe_fd[1]);
 	redirect_fd(list);
-	ft_exec(cmd, envp);
+	if (!exec_my_cmd(data, list))
+		ft_exec(cmd, envp);
 }
 
 void pipe_proc(t_list *list, char **cmd, char **envp)
@@ -154,7 +158,8 @@ void pipe_cmd_proc(t_list *list, char **envp)
 			tmp = tmp->next;
 		}
 		redirect_fd(tmp);
-		ft_exec(tmp->cmd, envp);
+		if (!exec_my_cmd(data, list))
+			ft_exec(tmp->cmd, envp);
 	}
 	else
 		waitpid(pid, NULL, 0);
