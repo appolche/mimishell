@@ -1,5 +1,8 @@
 #include "../minishell.h"
 
+//в пайпах не работает
+
+
 // если пришло cd без аргументов, переходит в HOME (если его нет, "bash: cd: Не задана переменная HOME")
 //"minishell: cd: HOME not set" exit.status = 1; // обработать command на NULL
 

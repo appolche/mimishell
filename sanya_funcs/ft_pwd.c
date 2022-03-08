@@ -3,6 +3,7 @@
 void ft_pwd_print(void)
 {
     char *tmp;
+
     tmp = getcwd(NULL, 0);
     printf("%s\n", tmp);
     free(tmp);
@@ -12,7 +13,7 @@ void ft_pwd_print(void)
 void ft_pwd(char **argv)
 {
     int i;
-    
+
     if(!argv[1])
     {
         ft_pwd_print();

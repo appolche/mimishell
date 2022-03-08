@@ -173,7 +173,8 @@ void parse_list(t_envp *envp, t_list *list)
                 i--;
             }
         }
-        parse_redirect(list, list->str_redir);
+        if (list->str_redir)
+            parse_redirect(list, list->str_redir);
         list = list->next;
     }
 }

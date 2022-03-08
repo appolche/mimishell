@@ -78,22 +78,22 @@ int array_len(char **av)
         return (0);
     while (av[i])
         i++;
-    return (i);
+    return (i - 1);
 }
 
 void ft_out(int value, int flag, char *av)
 {
     // rl_clear_history();
-    data->exit_status = (unsigned char)value;
+    // data->exit_status = (unsigned char)value;
     printf("exit\n");
-    if(flag == 1)
+    if (flag == 1)
         printf("bash: exit: %s: numeric argument required\n", av);
-    if(flag == 2)
+    if (flag == 2)
     {
         printf("bash: exit: too many arguments\n");
         return ;
     }
-    exit(value);
+    exit (value);
 }
 
 void ft_exit(char **av)
@@ -101,27 +101,26 @@ void ft_exit(char **av)
     int i;
     char *str;
 
-    if(!av)
-        return ;
+    if (!av)
+        exit(0);
     i = array_len(av);
-    if(i == 1)
+    if (i == 0)
         ft_out(0, 0, NULL);
     str = check_bracket(av);
-    if(str)
+    if (str)
     {
         printf("bash: syntax error near unexpected token `%s'\n", str);
         free(str);
         data->exit_status = 258;
-        return ;
+        exit(258);
     }
-    if(i > 1)
+    if (i >= 1)
     {
-        if(ft_isalldigit(av[1]))
+        if (ft_isalldigit(av[1]) && i == 1)
             ft_out(255, 1, av[1]);
-        else if(i > 2)
+        else if (i >= 2)
             ft_out(1, 2, NULL);
         else
             ft_out((unsigned char)ft_atoi(av[1]), 0, NULL);
     }
-    return ;
 }

@@ -1,5 +1,8 @@
 #include "../minishell.h"
 
+//без аргв в пайпах работает
+// с аргв не работает в пайпах
+
 int    ft_isdigit_char(char c)
 {
     return (c >= '0' && c <= '9');
@@ -74,7 +77,10 @@ void ft_export_next_step(t_envp *envp, char *name)
     t_envp *sort;
 
     if(name != NULL)
+    {
         envp = export_new_name(envp, name);
+        return ;
+    }
     sort = copy_envp(envp, sort);
     swap_list(sort);
     sort = struct_head(sort);
@@ -89,8 +95,9 @@ void ft_export(t_envp *envp, char **argv)
 
     i = 0;
     j = array_len(argv);
-    if(j > 1)
+    if (!argv[1])
     {
+        printf("sdjhfhjsb");
         ft_export_next_step(envp, NULL);
         return ;
     }
@@ -104,7 +111,7 @@ void ft_export(t_envp *envp, char **argv)
         }
         i++;
     }
-    i = 0;
+    i = 1;
     while (argv[i])
         ft_export_next_step(envp, argv[i++]);
     return ;

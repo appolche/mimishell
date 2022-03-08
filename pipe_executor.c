@@ -1,32 +1,48 @@
 #include "minishell.h"
 
-int	exec_my_cmd(t_data *data, t_list *list)
+void test(t_envp *envp)
 {
+	printf("я тут\n");
+	while (envp)
+	{
+		printf("%s\n", envp->name);
+		envp = envp->next;
+	}
+}
+
+void exec_my_cmd(t_list *list, t_envp *envp)
+{
+	// test(envp);
+	// printf("11111\n");
 	if (!ft_strcmp(list->cmd[0], "echo"))
 		ft_echo(list->cmd);
 	else if (!ft_strcmp(list->cmd[0], "env"))
-		ft_env(data->envp, list->cmd);
+		ft_env(envp, list->cmd);
 	else if (!ft_strcmp(list->cmd[0], "pwd"))
 		ft_pwd(list->cmd);
 	else if (!ft_strcmp(list->cmd[0], "export"))
-		ft_export(data->envp, list->cmd);
+		ft_export(envp, list->cmd);
 	else if (!ft_strcmp(list->cmd[0], "unset"))
-		ft_unset(&data->envp, list->cmd);
+		ft_unset(&envp, list->cmd);
 	else if (!ft_strcmp(list->cmd[0], "cd"))
-		ft_cd(data->envp, list->cmd);
-	else if (!ft_strcmp(list->cmd[0], "exit"))
-		ft_exit(list->cmd);
-	else 
-		return (0);
-	return (1);
+		ft_cd(envp, list->cmd);
+	// else if (!ft_strcmp(list->cmd[0], "exit"))
+	// 	ft_exit(list->cmd);
+}
+
+int is_my_command(t_list *list)
+{
+	if (!ft_strcmp(list->cmd[0], "echo") || !ft_strcmp(list->cmd[0], "env") || !ft_strcmp(list->cmd[0], "export") || !ft_strcmp(list->cmd[0], "unset") || !ft_strcmp(list->cmd[0], "pwd") || !ft_strcmp(list->cmd[0], "cd"))
+		return (1);
+	return (0);
 }
 
 void redirect_fd(t_list *list)
 {
-    if (list->file_fd[0] != -1)
-        dup2(list->file_fd[0], 0);
-    if (list->file_fd[1] != -1)
-        dup2(list->file_fd[1], 1); //добавить проверки на dup;
+	if (list->file_fd[0] != -1)
+		dup2(list->file_fd[0], 0);
+	if (list->file_fd[1] != -1)
+		dup2(list->file_fd[1], 1); //добавить проверки на dup;
 }
 
 void show_error(char *message)
@@ -69,6 +85,7 @@ void path_search(char **path, char **cmd, char **envp)
 				free(final_path);
 				show_error("Error: Cmd execution failed\n");
 			}
+			printf("minishell: %s: command not found\n", cmd[0]);
 		}
 		if (final_path)
 			free(final_path);
@@ -114,17 +131,22 @@ void pipe_parent_proc(int pipe_fd[2], pid_t pid)
 	waitpid(pid, NULL, 0);
 }
 
-void pipe_child_proc(t_list *list, char **cmd, char **envp, int pipe_fd[2])
+void pipe_child_proc(t_list *list, char **cmd, char **env, int pipe_fd[2], t_envp *envp)
 {
 	close(pipe_fd[0]);
 	dup2(pipe_fd[1], 1);
 	close(pipe_fd[1]);
 	redirect_fd(list);
-	if (!exec_my_cmd(data, list))
-		ft_exec(cmd, envp);
+	if (is_my_command(list))
+	{
+		exec_my_cmd(list, envp);
+		exit(1);
+	}
+	else
+		ft_exec(cmd, env);
 }
 
-void pipe_proc(t_list *list, char **cmd, char **envp)
+void pipe_proc(t_list *list, char **cmd, char **env, t_envp *envp)
 {
 	pid_t pid;
 	int pipe_fd[2];
@@ -135,45 +157,40 @@ void pipe_proc(t_list *list, char **cmd, char **envp)
 	if (pid == -1)
 		show_error("Error: Fork\n");
 	if (pid == 0)
-		pipe_child_proc(list, cmd, envp, pipe_fd);
+		pipe_child_proc(list, cmd, env, pipe_fd, envp);
 	else
 		pipe_parent_proc(pipe_fd, pid);
 }
 
-
-void pipe_cmd_proc(t_list *list, char **envp)
+void pipe_cmd_proc(t_list *list, char **env, t_envp *envp)
 {
 	t_list *tmp;
 	pid_t pid;
 
-	tmp = list;
+	if (list->next == NULL && !ft_strcmp(list->cmd[0], "exit"))
+	{
+		ft_exit(list->cmd);
+		return ;
+	}
 	pid = fork();
 	if (pid == -1)
 		show_error("Error: Fork\n");
 	if (pid == 0)
 	{
-		while (tmp->next)
+		while (list->next)
 		{
-			pipe_proc(tmp, tmp->cmd, envp);
-			tmp = tmp->next;
+			pipe_proc(list, list->cmd, env, envp);
+			list = list->next;
 		}
-		redirect_fd(tmp);
-		if (!exec_my_cmd(data, list))
-			ft_exec(tmp->cmd, envp);
+		redirect_fd(list);
+		if (is_my_command(list))
+		{
+			exec_my_cmd(list, envp);
+			exit(1);
+		}
+		else
+			ft_exec(list->cmd, env);
 	}
 	else
 		waitpid(pid, NULL, 0);
 }
-
-// void one_cmd_proc(char **cmd, char **env)
-// {
-// 	pid_t pid;
-
-// 	pid = fork();
-// 	if (pid == -1)
-// 		show_error("Error: Fork\n");
-// 	if (pid == 0)
-// 		ft_exec(cmd, env);
-// 	else
-// 		waitpid(pid, NULL, 0);
-// }

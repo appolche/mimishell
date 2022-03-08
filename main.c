@@ -65,7 +65,8 @@ int shell_loop(t_data *data, t_envp *envp)
         {
             parse_list(envp, list);
             parse_each_node(list);
-            pipe_cmd_proc(list, data->env);
+            pipe_cmd_proc(list, data->env, envp);
+            // printf("я тут\n");
         }
 
         // ft_array_envp(envp, &data);

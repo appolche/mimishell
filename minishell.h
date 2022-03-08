@@ -20,15 +20,6 @@
 # include <sys/wait.h>
 # include <sys/stat.h>
 
-typedef struct s_data
-{
-    char *str;
-    char **env;
-    // struct sigaction	sigac;
-    int exit_status;
-    struct s_envp *envp;
-}   t_data;
-
 typedef struct s_envp
 {
     char *name;
@@ -50,6 +41,15 @@ typedef struct s_list
     int file_fd[2];
     int heredoc;
 }   t_list;
+
+typedef struct s_data
+{
+    char *str;
+    char **env;
+    // struct sigaction	sigac;
+    int exit_status;
+    t_envp *envp;
+}   t_data;
 
 t_data *data;
 
@@ -86,9 +86,9 @@ void    cut_str_cmd(t_list *list, int start);
 char    *ft_substr_cpy(char *src, int *start, char c);
 void parse_each_node(t_list *list);
 
-void pipe_cmd_proc(t_list *list, char **envp);
-void pipe_proc(t_list *list, char **cmd, char **envp);
-void pipe_child_proc(t_list *list, char **cmd, char **envp, int pipe_fd[2]);
+void pipe_cmd_proc(t_list *list, char **env, t_envp *envp);
+void pipe_proc(t_list *list, char **cmd, char **env, t_envp *envp);
+void pipe_child_proc(t_list *list, char **cmd, char **env, int pipe_fd[2], t_envp *envp);
 void pipe_parent_proc(int pipe_fd[2], pid_t pid);
 void ft_exec(char **cmd, char **envp);
 void path_search(char **path, char **cmd, char **envp);
