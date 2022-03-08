@@ -97,7 +97,6 @@ void ft_export(t_envp *envp, char **argv)
     j = array_len(argv);
     if (!argv[1])
     {
-        printf("sdjhfhjsb");
         ft_export_next_step(envp, NULL);
         return ;
     }

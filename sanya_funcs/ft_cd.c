@@ -2,7 +2,6 @@
 
 //в пайпах не работает
 
-
 // если пришло cd без аргументов, переходит в HOME (если его нет, "bash: cd: Не задана переменная HOME")
 //"minishell: cd: HOME not set" exit.status = 1; // обработать command на NULL
 
@@ -11,6 +10,16 @@
 если pwd или oldpwd нет в env то они не создаються, при выходе из bash восстанавливаются старые значения
 при в ходе в новый при отсутствие PWD и(или) OLDPWD  восстонавливается только PWD текущей деректории
  */
+
+void test_prinrt(t_envp *test)
+{
+    while (test)
+    {
+        printf("test - %s = %s", test->name, test->value);
+        test = test->next;
+    }
+    
+}
 char *cd_home(t_envp *envp)
 {
     t_envp *home;
@@ -33,17 +42,15 @@ void ft_cd_next_step(t_envp *envp, char *command) // добавить преме
     t_envp *oldpwd;
 
     pwd = envp;
-    pwd = search_name(envp, "PWD"); // push_back
-    if (!command)
-        command = cd_home(envp);
-    if (!command)
-        return;
+    pwd = search_name(pwd, "PWD"); // push_back
     if (chdir(command) == 0)
     {
         oldpwd = search_name(envp, "OLDPWD");
         oldpwd->value = pwd->value;
         pwd->value = getcwd(NULL, 0);
         data->exit_status = 0;
+        envp = struct_head(pwd);
+        test_prinrt(envp);
     }
     else
     {
@@ -55,16 +62,26 @@ void ft_cd_next_step(t_envp *envp, char *command) // добавить преме
 
 void ft_cd(t_envp *envp, char **command)
 {
-    int i;
+    // int i;
+    char *home;
 
-    i = array_len(command);
-    if (i > 1)
+    // i = array_len(command);
+    // if (i > 1)
+    // {
+    //     printf("bash: cd: too many arguments");
+    //     data->exit_status = 1;
+    //     return ;
+    // }
+    if (command[1] == NULL)
     {
-        printf("bash: cd: too many arguments");
-        data->exit_status = 1;
-        return ;
+        home = ft_strdup(cd_home(envp));
+        if (!home)
+            return;
+        ft_cd_next_step(envp, home);
+        free(home);
     }
-    ft_cd_next_step(envp, command[1]);
+    else
+        ft_cd_next_step(envp, command[1]);
 }
 // dleaves@dleaves42:~/projects/git-mimi-01-03$ cd ./ ../
 // bash: cd: too many arguments
