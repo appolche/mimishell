@@ -132,8 +132,8 @@ void ft_env_next_step(t_envp *envp);
 void ft_exit(char **av);
 int array_len(char **av);
 
-void ft_export(t_envp *envp, char **argv);
-void ft_export_next_step(t_envp *envp, char *name);
+void ft_export(t_envp **envp, char **argv);
+void ft_export_next_step(t_envp **envp, char *name);
 t_envp *copy_envp(t_envp *envp, t_envp *sort);
 t_envp	*export_new_name(t_envp *envp, char *name);
 void print_export(t_envp *list);

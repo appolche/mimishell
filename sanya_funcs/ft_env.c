@@ -5,9 +5,9 @@ void ft_env_next_step(t_envp *envp)
     t_envp *tmp;
     tmp = envp;
 
-    while(tmp->next)
+    while (tmp)
     {
-        if(tmp->value == NULL)
+        if (tmp->value == NULL)
             tmp = tmp->next;
         else
         {
@@ -21,6 +21,7 @@ void ft_env(t_envp *envp, char **argv)
 {
     int i;
 
+    // test_prinrt(envp);
     i = array_len(argv);
     if (i >= 1)
     {

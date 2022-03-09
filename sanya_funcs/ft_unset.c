@@ -66,6 +66,6 @@ void ft_unset(t_envp **envp, char **name)
     i = 0;
     while(name[++i])
         ft_unset_next_step(envp, name[i]);
-    ft_array_envp(*envp, &data);
-    data->exit_status = 0;
+    // ft_array_envp(*envp, &data);
+    // data->exit_status = 0;
 }

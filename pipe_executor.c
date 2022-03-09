@@ -13,7 +13,7 @@ void test(t_envp *envp)
 void exec_my_single_cmd(t_list *list, t_envp *envp)
 {
 	if (!ft_strcmp(list->cmd[0], "export"))
-		ft_export(envp, list->cmd);
+		ft_export(&envp, list->cmd);
 	else if (!ft_strcmp(list->cmd[0], "unset"))
 		ft_unset(&envp, list->cmd);
 	else if (!ft_strcmp(list->cmd[0], "cd"))

@@ -72,23 +72,23 @@ t_envp *copy_envp(t_envp *envp, t_envp *sort)
     return (sort);
 }
 
-void ft_export_next_step(t_envp *envp, char *name)
+void ft_export_next_step(t_envp **envp, char *name)
 {
     t_envp *sort;
 
     if(name != NULL)
     {
-        envp = export_new_name(envp, name);
+        *envp = export_new_name(*envp, name);
         return ;
     }
-    sort = copy_envp(envp, sort);
+    sort = copy_envp(*envp, sort);
     swap_list(sort);
     sort = struct_head(sort);
     ft_lstclear(&sort);
-    data->exit_status = 0;
+    // data->exit_status = 0;
 }
 
-void ft_export(t_envp *envp, char **argv)
+void ft_export(t_envp **envp, char **argv)
 {
     int i;
     int j;
@@ -105,7 +105,7 @@ void ft_export(t_envp *envp, char **argv)
         if(ft_isdigit_char(argv[i][0]))
         {
             printf("minishell: export: `%s': not a valid identifier\n", argv[i]);
-            data->exit_status = 1;
+            // data->exit_status = 1;
             return ;
         }
         i++;
