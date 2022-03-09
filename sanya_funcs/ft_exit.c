@@ -111,7 +111,7 @@ void ft_exit(char **av)
     {
         printf("bash: syntax error near unexpected token `%s'\n", str);
         free(str);
-        data->exit_status = 258;
+        // data->exit_status = 258;
         exit(258);
     }
     if (i >= 1)

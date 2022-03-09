@@ -1,6 +1,5 @@
 #include "minishell.h"
 
-
 void	here_doc_child(int pipe_fd[2], char *limiter)
 {
 	char	*line;
@@ -44,6 +43,4 @@ int	here_doc_mode(char *limiter)
 		waitpid(pid, NULL, 0);
 	}
 	return (pipe_fd[0]);
-		// pipe_parent_proc(pipe_fd, pid);
-		
 }

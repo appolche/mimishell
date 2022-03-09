@@ -51,7 +51,7 @@ typedef struct s_data
     t_envp *envp;
 }   t_data;
 
-t_data *data;
+// t_data *data;
 
 //my_part
 int shell_loop(t_data *data, t_envp *envp);
@@ -86,14 +86,20 @@ void    cut_str_cmd(t_list *list, int start);
 char    *ft_substr_cpy(char *src, int *start, char c);
 void parse_each_node(t_list *list);
 
-void pipe_cmd_proc(t_list *list, char **env, t_envp *envp);
-void pipe_proc(t_list *list, char **cmd, char **env, t_envp *envp);
-void pipe_child_proc(t_list *list, char **cmd, char **env, int pipe_fd[2], t_envp *envp);
+void pipe_cmd_proc(t_list *list, t_envp *envp);
+void pipe_proc(t_list *list, char **cmd, t_envp *envp);
+void pipe_child_proc(t_list *list, char **cmd, int pipe_fd[2], t_envp *envp);
 void pipe_parent_proc(int pipe_fd[2], pid_t pid);
-void ft_exec(char **cmd, char **envp);
+void ft_exec(char **cmd, t_envp *env_list);
 void path_search(char **path, char **cmd, char **envp);
 void absolute_path_exec(char **cmd, char **envp);
 void show_error(char *message);
+char **make_env_array(t_envp *envp);
+
+int is_my_command(t_list *list);
+int check_my_cmd(char **cmd);
+void exec_my_cmd(t_list *list, t_envp *envp);
+void exec_my_single_cmd(t_list *list, t_envp *envp);
 
 int	here_doc_mode(char *limiter);
 void	here_doc_child(int pipe_fd[2], char *limiter);
@@ -105,7 +111,8 @@ void free_list(t_list **list);
 
 void parse_redirect(t_list *list, char *str_redir);
 char *get_file_name(char *str, int i, int *ret);
-
+char *filename_in_quotes(char *str, int *i, int c);
+void open_file(t_list *list, char *redir_type, char *file_name);
 
 //sanya_part
 int env_copy(t_data *data, char **env);

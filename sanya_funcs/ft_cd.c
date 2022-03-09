@@ -28,7 +28,7 @@ char *cd_home(t_envp *envp)
     if (!home)
     {
         printf("minishell: cd: HOME not set");
-        data->exit_status = 1;
+        // data->exit_status = 1;
         return (NULL);
     }
     tmp = home->value;
@@ -56,8 +56,8 @@ void ft_cd_next_step(t_envp *envp, char *command) // добавить преме
     }
     else
     {
-        printf("bash: cd: %s: %s\n", command, strerror(errno)); //возможно стоит заменить на strerror(errno), STDERR_FILENO подробнее смотреть у вани static void	change_dir(char *new_path)
-        data->exit_status = 1;
+        printf("bash: cd: %s: No such file or directory\n", command); //возможно стоит заменить на strerror(errno), STDERR_FILENO подробнее смотреть у вани static void	change_dir(char *new_path)
+        // data->exit_status = 1;
         return;
     }
 }

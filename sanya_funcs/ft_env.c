@@ -26,7 +26,7 @@ void ft_env(t_envp *envp, char **argv)
     if (i >= 1)
     {
         printf("env: ‘%s’: No such file or directory\n", argv[1]);
-        data->exit_status = 127;
+        // data->exit_status = 127;
         return ;
     }
     else

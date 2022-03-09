@@ -20,7 +20,7 @@ void ft_echo_next_step(char *av, int flag)
         printf("%s", av);
     else
         printf("%s\n", av);
-    data->exit_status = 0;
+    // data->exit_status = 0;
     return;
 }
 
@@ -57,7 +57,7 @@ void ft_echo(char **av)
     if (i == 0)
     {
         printf("\n");
-        data->exit_status = 0;
+        // data->exit_status = 0;
         return;
     }
     flag = check_flag(av[1]);
@@ -65,7 +65,7 @@ void ft_echo(char **av)
     if (flag == 1 && i == 1)
     {
         printf("\r");
-        data->exit_status = 0;
+        // data->exit_status = 0;
         return;
     }
     if (flag == 1)
@@ -90,7 +90,7 @@ void ft_echo(char **av)
         }
         i++;
     }
-    data->exit_status = 0;
+    // data->exit_status = 0;
     return;
 }
 // echo
