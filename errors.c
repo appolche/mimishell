@@ -39,7 +39,7 @@ int redir_syntax_errors(char *str)
         {
                 printf("minishell: syntax error near unexpected token `newline'\n");
                 return (1);
-            }
+        }
         if (str[i] == '>')
         {
             i++;
@@ -61,6 +61,11 @@ int redir_syntax_errors(char *str)
         }
         else if (str[i] == '<')
         {
+            if (str[i + 1] == '<' && str[i + 2] == '\0')
+            {
+                printf("minishell: syntax error near unexpected token `newline'\n");
+                return (1);
+            }
             c = 0;
             while (str[i] == '<')
             {

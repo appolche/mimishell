@@ -10,14 +10,14 @@ void parse_each_node(t_list *list)
     }
 }
 
-void parse_list(t_envp *envp, t_list *list)
+int parse_list(t_envp *envp, t_list *list, t_data *data)
 {
     int i;
 
     while (list)
     {
         if (redir_syntax_errors(list->str))
-            return ;
+            return (0);
         list->str_cmd = ft_strtrim(list->str, " ");
         i = -1;
         while (list->str_cmd[++i])
@@ -35,12 +35,13 @@ void parse_list(t_envp *envp, t_list *list)
             }
         }
         if (list->str_redir)
-            parse_redirect(list, list->str_redir);
+            parse_redirect(list, list->str_redir, data);
         list = list->next;
     }
+    return (1);
 }
 
-void split_for_list(char *str, t_list **list)
+int split_for_list(char *str, t_list **list)
 {
     int i;
     int j;
@@ -50,19 +51,19 @@ void split_for_list(char *str, t_list **list)
     if (syntax_errors(str))
     {
         free(str);
-        return;
+        return (0);
     }
     while (str[++i])
     {
         if (str[i] == '\'')
         {
             if (check_unclosed_quotes(str, &i, '\''))
-                return ;
+                return (0);
         }
         else if (str[i] == '\"')
         {
             if (check_unclosed_quotes(str, &i, '\"'))
-                return ;
+                return (0);
         }
         if (str[i] == '|')
         {
@@ -73,4 +74,5 @@ void split_for_list(char *str, t_list **list)
     *list = create_list(*list, str, i, j);
     make_null_init(*list);
     free(str);
+    return (1);
 }

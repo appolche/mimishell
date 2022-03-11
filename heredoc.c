@@ -22,7 +22,14 @@ void	here_doc_child(int pipe_fd[2], char *limiter)
 	}
 }
 
-int	here_doc_mode(char *limiter)
+static void	exit_here_doc(int sig)
+{
+	(void)sig;
+	printf("\n");
+	exit(1);
+}
+
+int	here_doc_mode(char *limiter, t_data *data)
 {
 	pid_t	pid;
 	int		pipe_fd[2];
@@ -35,12 +42,19 @@ int	here_doc_mode(char *limiter)
 		close(pipe_fd[0]);
 		close(pipe_fd[1]);
 	}
+	par_disable_sig();
 	if (pid == 0)
+	{
+		rl_catch_signals = 1;
+		par_set_default_sig();
+		signal(SIGINT, exit_here_doc);
 		here_doc_child(pipe_fd, limiter);
+	}
 	else
 	{
 		close(pipe_fd[1]);
 		waitpid(pid, NULL, 0);
 	}
+	par_set_custom_sig();
 	return (pipe_fd[0]);
 }

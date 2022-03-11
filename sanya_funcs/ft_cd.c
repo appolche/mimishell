@@ -38,7 +38,9 @@ char *cd_home(t_envp *envp)
 void change_envp_value(t_envp *envp, char *name, char *value)
 {
     envp = search_name(envp, name);
-    envp->value = value;
+    if (envp)
+        envp->value = value;
+    printf("env: %s\n", envp->value);
 }
 
 void ft_cd_next_step(t_envp *envp, char *command) // добавить пременую команды, можно добавить сюда переменную о сообщении, или сделать их макросоми
@@ -47,15 +49,21 @@ void ft_cd_next_step(t_envp *envp, char *command) // добавить преме
     char *new_pwd;
 
     old_pwd = search_name(envp, "PWD");
+    printf("old_pwd: %s\n", old_pwd->value);
+    printf("chdir =%d", chdir(command));
     if (chdir(command) == 0)
     {
+        printf("111");
         change_envp_value(envp, "OLDPWD", old_pwd->value);
+        printf("222");
         new_pwd = getcwd(NULL, 0);
+        printf("new_pwd: %s\n", new_pwd);
         change_envp_value(envp, "PWD", new_pwd);
         // data->exit_status = 0;
     }
     else
     {
+        printf("333");
         printf("bash: cd: %s: No such file or directory\n", command); //возможно стоит заменить на strerror(errno), STDERR_FILENO подробнее смотреть у вани static void	change_dir(char *new_path)
         // data->exit_status = 1;
         return;

@@ -31,7 +31,7 @@ void pipe_child_proc(t_list *list, char **cmd, int pipe_fd[2], t_envp *envp)
 		ft_exec(cmd, envp);
 }
 
-void pipe_proc(t_list *list, char **cmd, t_envp *envp)
+void pipe_proc(t_list *list, char **cmd, t_envp *envp, t_data *data)
 {
 	pid_t pid;
 	int pipe_fd[2];
@@ -47,11 +47,13 @@ void pipe_proc(t_list *list, char **cmd, t_envp *envp)
 		pipe_parent_proc(pipe_fd, pid);
 }
 
-void pipe_cmd_proc(t_list *list, t_envp *envp)
+void pipe_cmd_proc(t_list *list, t_envp *envp, t_data *data)
 {
 	t_list *tmp;
 	pid_t pid;
 
+	if (list->cmd[0] == NULL)
+		return ;
 	if (list->next == NULL && check_my_cmd(list->cmd))
 	{
 		exec_my_single_cmd(list, envp);
@@ -60,11 +62,13 @@ void pipe_cmd_proc(t_list *list, t_envp *envp)
 	pid = fork();
 	if (pid == -1)
 		show_error("Error: Fork\n");
+	par_disable_sig();
 	if (pid == 0)
 	{
+		par_set_default_sig();
 		while (list->next)
 		{
-			pipe_proc(list, list->cmd, envp);
+			pipe_proc(list, list->cmd, envp, data);
 			list = list->next;
 		}
 		redirect_fd(list);
@@ -78,4 +82,5 @@ void pipe_cmd_proc(t_list *list, t_envp *envp)
 	}
 	else
 		waitpid(pid, NULL, 0);
+	par_set_custom_sig();
 }

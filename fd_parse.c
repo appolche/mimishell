@@ -18,7 +18,7 @@
 если встречаем новый редирект, то закрываем старый фд и перезаписываем fd
 */
 
-void open_file(t_list *list, char *redir_type, char *file_name)
+void open_file(t_list *list, char *redir_type, char *file_name, t_data *data)
 {
     int j;
 
@@ -26,9 +26,13 @@ void open_file(t_list *list, char *redir_type, char *file_name)
     if (redir_type[j] == '>') 
     {   
         if (list->file_fd[1] != -1)
-            close(list->file_fd[1]);    
+            close(list->file_fd[1]);
         if (redir_type[j + 1] == '>') //дозапись
+        {
             list->file_fd[1] = open(file_name, O_WRONLY | O_CREAT | O_APPEND, 0666);
+            if (list->file_fd[1] == -1)
+                printf("minishell: syntax error near unexpected token `newline'\n");
+        }
         else // rewrite
             list->file_fd[1] = open(file_name, O_WRONLY | O_CREAT | O_TRUNC, 0666);
     }
@@ -37,7 +41,7 @@ void open_file(t_list *list, char *redir_type, char *file_name)
         if (list->file_fd[0] != -1)
             close(list->file_fd[0]);
         if (redir_type[j + 1] == '<') // heredoc
-            list->file_fd[0] = here_doc_mode(file_name);
+            list->file_fd[0] = here_doc_mode(file_name, data);
         else // read_only
         {
             list->file_fd[0] = open(file_name, O_RDONLY);
@@ -100,7 +104,7 @@ char *get_file_name(char *str, int i, int *ret)
     return (file_name);
 }
 
-void parse_redirect(t_list *list, char *str_redir)
+void parse_redirect(t_list *list, char *str_redir, t_data *data)
 {
     int i;
     int j;
@@ -126,7 +130,7 @@ void parse_redirect(t_list *list, char *str_redir)
         }
         redir_type = ft_substr(str, j, count);
         file_name = get_file_name(str, i, &i);
-        open_file(list, redir_type, file_name);
+        open_file(list, redir_type, file_name, data);
     }
     free(str);
     str = NULL;

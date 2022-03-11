@@ -46,12 +46,16 @@ typedef struct s_data
 {
     char *str;
     char **env;
+    sig_t			SIG_INT;
+	sig_t			SIG_QUIT;
     // struct sigaction	sigac;
     int exit_status;
     t_envp *envp;
 }   t_data;
 
-// t_data *data;
+// sig_t			SIG_INT;
+// sig_t			SIG_QUIT;
+t_data data;
 
 //my_part
 int shell_loop(t_data *data, t_envp *envp);
@@ -59,8 +63,8 @@ int shell_loop(t_data *data, t_envp *envp);
 int syntax_errors(char *str);
 int redir_syntax_errors(char *str);
 
-void     split_for_list(char *rl_str, t_list **list);
-void    parse_list(t_envp *envp, t_list *list);
+int     split_for_list(char *rl_str, t_list **list);
+int    parse_list(t_envp *envp, t_list *list, t_data *data);
 
 //string_cutters
 char *split_cmd_redir(t_list *list, char *str, int i);
@@ -86,8 +90,8 @@ void    cut_str_cmd(t_list *list, int start);
 char    *ft_substr_cpy(char *src, int *start, char c);
 void parse_each_node(t_list *list);
 
-void pipe_cmd_proc(t_list *list, t_envp *envp);
-void pipe_proc(t_list *list, char **cmd, t_envp *envp);
+void pipe_cmd_proc(t_list *list, t_envp *envp, t_data *data);
+void pipe_proc(t_list *list, char **cmd, t_envp *envp, t_data *data);
 void pipe_child_proc(t_list *list, char **cmd, int pipe_fd[2], t_envp *envp);
 void pipe_parent_proc(int pipe_fd[2], pid_t pid);
 void ft_exec(char **cmd, t_envp *env_list);
@@ -101,7 +105,7 @@ int check_my_cmd(char **cmd);
 void exec_my_cmd(t_list *list, t_envp *envp);
 void exec_my_single_cmd(t_list *list, t_envp *envp);
 
-int	here_doc_mode(char *limiter);
+int	here_doc_mode(char *limiter, t_data *data);
 void	here_doc_child(int pipe_fd[2], char *limiter);
 
 
@@ -109,10 +113,10 @@ char	**malloc_free(char **tab);
 void free_list(t_list **list);
 
 
-void parse_redirect(t_list *list, char *str_redir);
+void parse_redirect(t_list *list, char *str_redir, t_data *data);
 char *get_file_name(char *str, int i, int *ret);
 char *filename_in_quotes(char *str, int *i, int c);
-void open_file(t_list *list, char *redir_type, char *file_name);
+void open_file(t_list *list, char *redir_type, char *file_name, t_data *data);
 
 //sanya_part
 int env_copy(t_data *data, char **env);
@@ -163,5 +167,13 @@ void free_env(t_data *data);
 int ft_array_envp(t_envp *envp, t_data **data);
 char    *ft_strjoin2(char *s1, char *s2);
 int size_list(t_envp *envp);
+
+// signal
+void	signal_handler(int sig);
+void	par_set_default_sig();
+void	par_set_custom_sig(void);
+void	par_disable_sig(void);
+void	par_sig_init();
+void	sig_handler_child(int sig_num);
 
 #endif
