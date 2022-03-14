@@ -35,16 +35,16 @@ void printf_char(char **test)
     }
 }
 
-void	ft_putstr_fd(char *s, int fd)
+void ft_putstr_fd(char *s, int fd)
 {
-	int i;
+    int i;
 
-	i = 0;
-	while (s[i])
-	{
-		write(fd, &s[i], 1);
-		i++;
-	}
+    i = 0;
+    while (s[i])
+    {
+        write(fd, &s[i], 1);
+        i++;
+    }
 }
 
 void ft_echo(char **av)
@@ -53,6 +53,7 @@ void ft_echo(char **av)
     int i;
 
     // printf_char(av);
+     printf("av[1]: %s\n", av[1]);
     i = array_len(av);
     if (i == 0)
     {
@@ -74,6 +75,7 @@ void ft_echo(char **av)
         i = 1;
     while (av[i])
     {
+        // printf("loop av[1]: %s\n", av[1]); сюда не заходит
         if (flag == 1)
         {
             ft_putstr_fd(av[i], 1);

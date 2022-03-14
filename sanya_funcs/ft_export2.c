@@ -5,7 +5,10 @@
 
 int ft_isdigit_char(char c)
 {
-    return (c >= '0' && c <= '9');
+    if (c >= '0' && c <= '9')
+        return (1);
+    else
+        return (0);
 }
 
 void print_export(t_envp *list)
@@ -72,60 +75,52 @@ t_envp *copy_envp(t_envp *envp, t_envp *sort)
     return (sort);
 }
 
-int change_envp(t_envp *envp, char *str)
+int replace_env_value(t_envp *envp, char *value)//функция поиска и изменения значения в переменных окружения
 {
+    char **tmp;
     int i;
-    int j;
-    char *name = NULL;
-    char *value;
 
-    i = 0;
-    j = 0;
-    while (str[i])
+    tmp = ft_split(value, '=');
+    envp = search_name(envp, tmp[0]);
+    if (!envp)
     {
-        if (str[i] == '=')
-        {
-            name = ft_substr(str, 0, i);
-            j = i;
-            printf("name: %s\n", name);
-            break;
-        }
-        i++;
-    }
-    if (name == NULL)
+        malloc_free(tmp);
         return (0);
-    if (search_name(envp, name))
-    {
-        while (str[i])
-            i++;
-        value = ft_substr(str, j + 1, i - j);
-        printf("value: %s\n", value);
-        change_envp_value(envp, name, value);
-        data.exit_status = 0;
-        return (1);
     }
-    free(name);
-    if (value)
-        free(value);
-    return (0);
-}
+    // if(tmp[1] == NULL)
+    //     tmp[1] = NULL;
+    change_envp_value(envp, tmp[0], tmp[1]);
+    data.exit_status = 0;
+    // free(tmp[0]); //возможно abort
+    free(tmp);
+    return (1);
+} 
 
-void ft_export_next_step(t_envp **envp, char *name)
+void ft_export_next_step(t_envp **envp, char **name)
 {
     t_envp *sort;
+    int i;
 
-    if (name != NULL)
+    i = 1;
+    while (name[i])
     {
-        if (change_envp(*envp, name))
-            return ;
-        *envp = export_new_name(*envp, name);
-        return ;
+        if (replace_env_value(*envp, name[i]))
+            i++;
+        else
+        {
+            if (name[i] != NULL)
+            {
+                *envp = export_new_name(*envp, name[i]);
+                return;
+            }
+            sort = copy_envp(*envp, sort);
+            swap_list(sort);
+            sort = struct_head(sort);
+            ft_lstclear(&sort);
+            data.exit_status = 0;
+            i++;
+        }
     }
-    sort = copy_envp(*envp, sort);
-    swap_list(sort);
-    sort = struct_head(sort);
-    ft_lstclear(&sort);
-    data.exit_status = 0;
 }
 
 void ft_export(t_envp **envp, char **argv)
@@ -135,7 +130,7 @@ void ft_export(t_envp **envp, char **argv)
 
     i = 0;
     j = array_len(argv);
-    if (argv[1] == NULL)
+    if (!argv[1])
     {
         ft_export_next_step(envp, NULL);
         return;
@@ -150,13 +145,7 @@ void ft_export(t_envp **envp, char **argv)
         }
         i++;
     }
-    i = 1;
-    while (argv[i])
-    {
-        printf("%d: %s\n",i, argv[i]);
-        ft_export_next_step(envp, argv[i]);
-        i++;
-    }
+    ft_export_next_step(envp, argv);
     return;
 }
 

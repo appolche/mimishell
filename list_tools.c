@@ -72,5 +72,5 @@ void free_list(t_list **list)
         free(*list);
         *list = tmp;
     }
-    free(*list);
+    // free(*list);
 }

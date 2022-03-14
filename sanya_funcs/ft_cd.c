@@ -19,6 +19,24 @@
 //         test = test->next;
 //     }
 // }
+int check_pwd(t_envp *envp)
+{
+    int i;
+
+    i = 0;
+    if (!search_name(envp, "PWD"))
+    {
+        push_back(ft_strdup("PWD"), NULL, envp);
+        i++;
+    }
+    if (!search_name(envp, "OLDPWD"))
+    {
+        push_back(ft_strdup("OLDPWD"), NULL, envp);
+        i++;
+    }
+    return (i);
+}
+
 char *cd_home(t_envp *envp)
 {
     t_envp *home;
@@ -28,7 +46,7 @@ char *cd_home(t_envp *envp)
     if (!home)
     {
         printf("minishell: cd: HOME not set");
-        // data->exit_status = 1;
+        data.exit_status = 1;
         return (NULL);
     }
     tmp = home->value;
@@ -39,58 +57,56 @@ void change_envp_value(t_envp *envp, char *name, char *value)
 {
     envp = search_name(envp, name);
     if (envp)
+    {
+        free (envp->value);
         envp->value = value;
-    printf("env: %s\n", envp->value);
+    }
 }
 
 void ft_cd_next_step(t_envp *envp, char *command) // добавить пременую команды, можно добавить сюда переменную о сообщении, или сделать их макросоми
 {
     t_envp *old_pwd;
     char *new_pwd;
+    int check;
 
+    check = check_pwd(envp);
     old_pwd = search_name(envp, "PWD");
-    printf("old_pwd: %s\n", old_pwd->value);
-    printf("chdir =%d", chdir(command));
+    old_pwd->value = getcwd(NULL, 0);
     if (chdir(command) == 0)
     {
-        printf("111");
         change_envp_value(envp, "OLDPWD", old_pwd->value);
-        printf("222");
         new_pwd = getcwd(NULL, 0);
-        printf("new_pwd: %s\n", new_pwd);
         change_envp_value(envp, "PWD", new_pwd);
-        // data->exit_status = 0;
+        data.exit_status = 0;
     }
     else
     {
-        printf("333");
-        printf("bash: cd: %s: No such file or directory\n", command); //возможно стоит заменить на strerror(errno), STDERR_FILENO подробнее смотреть у вани static void	change_dir(char *new_path)
-        // data->exit_status = 1;
-        return;
+        printf("minishell: cd: %s: No such file or directory\n", command); //возможно стоит заменить на strerror(errno), STDERR_FILENO подробнее смотреть у вани static void	change_dir(char *new_path)
+        data.exit_status = 1;
+        return ;
     }
 }
 
 void ft_cd(t_envp *envp, char **command)
 {
-    // int i;
+    int i;
     char *home;
 
-    // i = array_len(command);
-    // if (i > 1)
-    // {
-    //     printf("bash: cd: too many arguments");
-    //     data->exit_status = 1;
-    //     return ;
-    // }
+    i = array_len(command);
+    if (i > 1)
+    {
+        printf("minishell: cd: too many arguments\n");
+        data.exit_status = 1;
+        return;
+    }
     if (command[1] == NULL)
     {
         home = cd_home(envp);
         if (!home)
-            return;
+            return ;
+        check_pwd(envp);
         ft_cd_next_step(envp, home);
     }
     else
         ft_cd_next_step(envp, command[1]);
 }
-// dleaves@dleaves42:~/projects/git-mimi-01-03$ cd ./ ../
-// bash: cd: too many arguments

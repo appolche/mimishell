@@ -16,7 +16,8 @@ int parse_list(t_envp *envp, t_list *list, t_data *data)
 
     while (list)
     {
-        if (redir_syntax_errors(list->str))
+        //учесть ошибки в кавычках, должен пропускать
+        if (syntax_errors(list->str) || redir_syntax_errors(list->str))
             return (0);
         list->str_cmd = ft_strtrim(list->str, " ");
         i = -1;
@@ -27,7 +28,11 @@ int parse_list(t_envp *envp, t_list *list, t_data *data)
             else if (list->str_cmd[i] == '\"')
                 list->str_cmd = ft_double_quotes(list->str_cmd, &i, envp);
             if (list->str_cmd[i] == '$')
+            {
                 list->str_cmd = ft_dollar(list->str_cmd, &i, envp);
+                if (list->str_cmd == NULL)
+                    return (0);
+            }
             if (list->str_cmd[i] == '>' || list->str_cmd[i] == '<')
             {
                 list->str_cmd = split_cmd_redir(list, list->str_cmd, i);
@@ -48,11 +53,6 @@ int split_for_list(char *str, t_list **list)
 
     i = -1;
     j = 0;
-    if (syntax_errors(str))
-    {
-        free(str);
-        return (0);
-    }
     while (str[++i])
     {
         if (str[i] == '\'')

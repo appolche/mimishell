@@ -132,6 +132,7 @@ void    swap_list(t_envp *list);
 void ft_cd(t_envp *envp, char **command);
 void ft_cd_next_step(t_envp *envp, char *command);
 char *cd_home(t_envp *envp);
+void change_envp_value(t_envp *envp, char *name, char *value);
 
 void ft_echo(char **av);
 void ft_echo_next_step(char *av, int flag);
@@ -168,12 +169,16 @@ int ft_array_envp(t_envp *envp, t_data **data);
 char    *ft_strjoin2(char *s1, char *s2);
 int size_list(t_envp *envp);
 
+void	ft_shlvl(t_envp *envp);
+int lookup_name_replace_value(t_envp *envp, char **value);
+
 // signal
 void	signal_handler(int sig);
 void	par_set_default_sig();
 void	par_set_custom_sig(void);
 void	par_disable_sig(void);
-void	par_sig_init();
+void	sig_init();
 void	sig_handler_child(int sig_num);
+
 
 #endif

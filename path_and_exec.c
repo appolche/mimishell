@@ -38,7 +38,9 @@ void absolute_path_exec(char **cmd, char **envp)
 		if (execve(cmd[0], cmd, envp) == -1)
 			show_error("Error: Cmd execution failed\n");
 	}
-	show_error("minishell: No such file or directory\n");
+	printf("minishell: %s: No such file or directory\n", cmd[0]);
+	data.exit_status = 127;
+	exit(127);
 }
 
 void path_search(char **path, char **cmd, char **envp)
@@ -64,15 +66,17 @@ void path_search(char **path, char **cmd, char **envp)
 				printf("minishell: %s: command not found\n", cmd[0]);
 				malloc_free(path);
 				free(final_path);
-				exit(1);
+				exit(127);
 			}
 		}
 		if (final_path)
 			free(final_path);
 	}
+	printf("minishell: %s: command not found\n", cmd[0]);
 	if (path)
 		malloc_free(path);
-	exit(1);
+	data.exit_status = 127;
+	exit(127);
 }
 
 void ft_exec(char **cmd, t_envp *env_list)
@@ -99,7 +103,8 @@ void ft_exec(char **cmd, t_envp *env_list)
 	}
 	if (path)
 		path_search(path, cmd, envp);
-	show_error("minishell: No such file or directory\n");
+	printf("minishell: %s: No such file or directory", cmd[0]);
+	exit(127);
 	// else
 	// 	show_error("Error: Path not found\n");
 	// if (cmd)

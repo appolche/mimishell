@@ -29,7 +29,7 @@ void	par_disable_sig(void)
 	signal(SIGQUIT, SIG_IGN);
 }
 
-void	par_sig_init()
+void	sig_init()
 {
 	rl_catch_signals = 0;
 	data.SIG_INT = signal(SIGINT, signal_handler);

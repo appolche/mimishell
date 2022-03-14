@@ -60,7 +60,7 @@ char *split_cmd_redir(t_list *list, char *str, int i)
     return (new_str);
 }
 
-char *cut_and_change_piece(char *str, int start, char *name, char *value) //мб убрать?
+char *cut_and_change_piece(char *str, int start, char *name, char *value)
 {
     char *tmp;
     char *tmp2;

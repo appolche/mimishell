@@ -12,13 +12,9 @@ int shell_loop(t_data *data, t_envp *envp)
 {
     t_list *list;
 
-    // signal(SIGINT, &sig_handler_parent);
-    // signal(SIGQUIT, SIG_IGN);
-    // signal(SIGQUIT, &sig_handler_parent);
     while (1)
     {
         list = NULL;
-
         rl_on_new_line();
         data->str = readline("minishell: ");
         if (!data->str)
@@ -36,8 +32,6 @@ int shell_loop(t_data *data, t_envp *envp)
                 pipe_cmd_proc(list, envp, data);
             }
         }
-        // close(list->file_fd[0]);
-        // close(list->file_fd[1]);
         if (list)
             free_list(&list);
         if (data->str)
@@ -60,7 +54,8 @@ int main(int argc, char **argv, char **env)
     init_t_envp(data, &envp);
     if (!envp)
         exit(2);
-    par_sig_init(data);
+    sig_init(data);
+    ft_shlvl(envp);
     shell_loop(data, envp);
     ft_lstclear(&envp);
     free_env(data);

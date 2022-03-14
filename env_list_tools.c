@@ -65,6 +65,8 @@ t_envp *search_name(t_envp *envp, char *name) // функция поиска п�
             break;
         tmp_head = tmp_head->next;
     }
+    if (i == -1)
+        return (NULL);
     return (tmp_head); // обработать на NULL
 }
 
