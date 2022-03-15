@@ -103,7 +103,7 @@ void ft_exec(char **cmd, t_envp *env_list)
 	}
 	if (path)
 		path_search(path, cmd, envp);
-	printf("minishell: %s: No such file or directory", cmd[0]);
+	printf("minishell: %s: No such file or directory\n", cmd[0]);
 	data.exit_status = 127;
 	exit(127);
 }

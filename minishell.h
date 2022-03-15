@@ -53,8 +53,6 @@ typedef struct s_data
     t_envp *envp;
 }   t_data;
 
-// sig_t			SIG_INT;
-// sig_t			SIG_QUIT;
 t_data data;
 
 //my_part

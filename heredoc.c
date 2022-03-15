@@ -12,7 +12,6 @@ void	here_doc_child(int pipe_fd[2], char *limiter)
 			exit(1);
 		if (ft_strcmp(line, limiter) == 0)
 		{
-			// free(limiter);
 			free(line);
 			exit(0);
 		}
@@ -25,7 +24,6 @@ void	here_doc_child(int pipe_fd[2], char *limiter)
 static void	exit_here_doc(int sig)
 {
 	(void)sig;
-	printf("\n");
 	exit(1);
 }
 

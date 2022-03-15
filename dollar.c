@@ -9,12 +9,11 @@ char *dollar_vopros(char *str, int i)
 
     start = i;
     i += 1;
-    name = ft_substr(str, start + 1, i - start);
-    printf("name: /%s/\n", name);
+    name = ft_substr(str, start + 1, 1);
     value = ft_itoa(data.exit_status);
-    printf("value: /%s/\n", value);
     new_str = cut_and_change_piece(str, start, name, value);
     free(value);
+    free(name);
     return (new_str);
 }
 
@@ -29,7 +28,7 @@ char    *ft_dollar(char *str, int *i, t_envp *envp)
     if (str[*i] == '$' && str[*i + 1] == '?')
     {
         new_str = dollar_vopros(str, *i);
-        *i += 1;
+        *i = *i - 2 + 1;
         return (new_str);
     }
     start = *i;

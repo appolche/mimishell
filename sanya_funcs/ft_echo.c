@@ -1,97 +1,100 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_echo.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lfallon </var/mail/lfallon>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/03/15 21:51:03 by lfallon           #+#    #+#             */
+/*   Updated: 2022/03/15 21:51:10 by lfallon          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
-int check_flag(char *str)
+int	check_flag(char *str)
 {
-    int i;
+	int	i;
+	int	j;
 
-    i = 1;
-    while (str[i])
-    {
-        if (ft_strcmp(str, "-n") == 0)
-            return (0);
-        i++;
-    }
-
-    return (1);
+	i = 0;
+	while (str[i])
+	{
+		if (str[0] == '-')
+		{
+			j = 1;
+			while (str[j] && str[j] == 'n')
+			{
+				if (str[j + 1] == '\0')
+					return (j);
+				j++;
+			}
+		}
+		i++;
+	}
+	return (0);
 }
 
-void ft_echo_next_step(char *av, int flag)
+void	ft_putstr_fd(char *s, int fd)
 {
-    if (flag == 1)
-        printf("%s", av);
-    else
-        printf("%s\n", av);
-    data.exit_status = 0;
-    return;
+	int	i;
+
+	i = 0;
+	while (s[i])
+	{
+		write(fd, &s[i], 1);
+		i++;
+	}
 }
 
-void printf_char(char **test)
+void	print_echo(int flag, char **av)
 {
-    int i = 0;
+	int	i;
 
-    while (test[i])
-    {
-        printf("%s\n", test[i]);
-        i++;
-    }
+	if (flag)
+		i = 2;
+	else
+		i = 1;
+	while (av[i])
+	{
+		if (flag)
+		{
+			ft_putstr_fd((av[i]), 1);
+			if (av[i + 1])
+				write(1, " ", 1);
+		}
+		else
+		{
+			ft_putstr_fd(av[i], 1);
+			if (av[i + 1])
+				write(1, " ", 1);
+			else
+				write(1, "\n", 1);
+		}
+		i++;
+	}
 }
 
-void ft_putstr_fd(char *s, int fd)
+void	ft_echo(char **av)
 {
-    int i;
+	int	flag;
+	int	i;
 
-    i = 0;
-    while (s[i])
-    {
-        write(fd, &s[i], 1);
-        i++;
-    }
+	i = array_len(av);
+	if (i == 0)
+	{
+		printf("\n");
+		data.exit_status = 0;
+		return ;
+	}
+	flag = check_flag(av[1]);
+	if (flag && i == 1)
+	{
+		printf("\r");
+		data.exit_status = 0;
+		return ;
+	}
+	print_echo(flag, av);
+	data.exit_status = 0;
+	return ;
 }
-
-void ft_echo(char **av)
-{
-    int flag;
-    int i;
-
-    i = array_len(av);
-    if (i == 0)
-    {
-        printf("\n");
-        data.exit_status = 0;
-        return;
-    }
-    flag = check_flag(av[1]);
-    if (flag != 1 && i == 1)
-    {
-        printf("\r");
-        data.exit_status = 0;
-        return;
-    }
-    if (flag == 0)
-        i = 2;
-    else
-        i = 1;
-    while (av[i])
-    {
-        if (flag == 0)
-        {
-            ft_putstr_fd((av[i]), 1);
-            if (av[i + 1])
-                write(1, " ", 1);
-        }
-        else
-        {
-            ft_putstr_fd(av[i], 1);
-            if (av[i + 1])
-                write(1, " ", 1);
-            else
-                write(1, "\n", 1);
-        }
-        i++;
-    }
-    data.exit_status = 0;
-    return;
-}
-// echo
-//-n-n-n-n
-// argument

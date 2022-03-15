@@ -57,10 +57,7 @@ void change_envp_value(t_envp *envp, char *name, char *value)
 {
     envp = search_name(envp, name);
     if (envp)
-    {
-        free (envp->value);
         envp->value = value;
-    }
 }
 
 void ft_cd_next_step(t_envp *envp, char *command) // добавить пременую команды, можно добавить сюда переменную о сообщении, или сделать их макросоми
@@ -75,12 +72,15 @@ void ft_cd_next_step(t_envp *envp, char *command) // добавить преме
     if (chdir(command) == 0)
     {
         change_envp_value(envp, "OLDPWD", old_pwd->value);
+        free(old_pwd->value);
         new_pwd = getcwd(NULL, 0);
         change_envp_value(envp, "PWD", new_pwd);
+        free(new_pwd);
         data.exit_status = 0;
     }
     else
     {
+        free(old_pwd->value);
         printf("minishell: cd: %s: No such file or directory\n", command); //возможно стоит заменить на strerror(errno), STDERR_FILENO подробнее смотреть у вани static void	change_dir(char *new_path)
         data.exit_status = 1;
         return ;

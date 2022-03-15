@@ -32,10 +32,14 @@ void	ft_lstclear(t_envp **lst) // очищение t_envp
 {
 	if (!lst || !(*lst))
 		return ;
-	ft_lstclear(&(*lst)->next);
-	free((*lst)->name);
-	free((*lst)->value);
-	free(*lst);
+    if ((*lst)->next)
+	    ft_lstclear(&(*lst)->next);
+    if ((*lst)->name)
+	    free((*lst)->name);
+    if ((*lst)->value)
+	    free((*lst)->value);
+    if (*lst)
+	    free(*lst);
 	*lst = NULL;
 }
 
