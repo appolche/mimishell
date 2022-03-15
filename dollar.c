@@ -10,13 +10,12 @@ char *dollar_vopros(char *str, int i)
     start = i;
     i += 1;
     name = ft_substr(str, start + 1, i - start);
-    printf("name: %s\n", name);
-    value = ft_strdup(ft_itoa(data.exit_status));
-    printf("value: %s\n", value);
+    printf("name: /%s/\n", name);
+    value = ft_itoa(data.exit_status);
+    printf("value: /%s/\n", value);
     new_str = cut_and_change_piece(str, start, name, value);
-    printf("new_str: %s\n", new_str);
-    // printf("%d", data.exit_status);
-    return(new_str);
+    free(value);
+    return (new_str);
 }
 
 char    *ft_dollar(char *str, int *i, t_envp *envp)

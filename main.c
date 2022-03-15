@@ -1,12 +1,4 @@
 #include "minishell.h"
-/*
-shlvl=.... обрубить по равно и поменть env
-$?
-*/
-
-// bash-3.2$ USER=abc
-// bash-3.2$ env | grep USER
-// USER=abc
 
 int shell_loop(t_data *data, t_envp *envp)
 {
@@ -15,7 +7,7 @@ int shell_loop(t_data *data, t_envp *envp)
     while (1)
     {
         list = NULL;
-        rl_on_new_line();
+        // rl_on_new_line();
         data->str = readline("minishell: ");
         if (!data->str)
             exit(1);

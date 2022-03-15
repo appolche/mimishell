@@ -7,10 +7,11 @@ int check_flag(char *str)
     i = 1;
     while (str[i])
     {
-        if (str[0] != '-' || str[i] != 'n')
+        if (ft_strcmp(str, "-n") == 0)
             return (0);
         i++;
     }
+
     return (1);
 }
 
@@ -20,7 +21,7 @@ void ft_echo_next_step(char *av, int flag)
         printf("%s", av);
     else
         printf("%s\n", av);
-    // data->exit_status = 0;
+    data.exit_status = 0;
     return;
 }
 
@@ -52,33 +53,29 @@ void ft_echo(char **av)
     int flag;
     int i;
 
-    // printf_char(av);
-     printf("av[1]: %s\n", av[1]);
     i = array_len(av);
     if (i == 0)
     {
         printf("\n");
-        // data->exit_status = 0;
+        data.exit_status = 0;
         return;
     }
     flag = check_flag(av[1]);
-    // printf("flag = %d\n", flag);
-    if (flag == 1 && i == 1)
+    if (flag != 1 && i == 1)
     {
         printf("\r");
-        // data->exit_status = 0;
+        data.exit_status = 0;
         return;
     }
-    if (flag == 1)
+    if (flag == 0)
         i = 2;
     else
         i = 1;
     while (av[i])
     {
-        // printf("loop av[1]: %s\n", av[1]); сюда не заходит
-        if (flag == 1)
+        if (flag == 0)
         {
-            ft_putstr_fd(av[i], 1);
+            ft_putstr_fd((av[i]), 1);
             if (av[i + 1])
                 write(1, " ", 1);
         }
@@ -92,7 +89,7 @@ void ft_echo(char **av)
         }
         i++;
     }
-    // data->exit_status = 0;
+    data.exit_status = 0;
     return;
 }
 // echo

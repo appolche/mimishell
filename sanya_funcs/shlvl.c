@@ -90,14 +90,13 @@ int check_value(char *str)
 void ft_shlvl(t_envp *envp)
 {
     int i;
-    int check;
     char *tmp;
 
     data.exit_status = 0;
     envp = search_name(envp, "SHLVL");
     if (!envp)
     {
-        push_back("SHLVL", NULL, envp);
+        push_back(ft_strdup("SHLVL"), NULL, envp);
         return ;
     }
     if (!envp->value)
@@ -105,9 +104,9 @@ void ft_shlvl(t_envp *envp)
         envp->value = ft_itoa(0);
         return ;
     }
-    check = check_value(envp->value);
-    if (check == 0)
+    if (check_value(envp->value) == 0)
     {
+        free(envp->value);
         envp->value = ft_itoa(1);
         return ;
     }
@@ -116,17 +115,23 @@ void ft_shlvl(t_envp *envp)
         i = ft_atoi(envp->value) + 1;
         if (i == 1000)
         {
+            free(envp->value);
             envp->value = NULL;
             return ;
         }
-        if (i >= 1001)
+        else if (i >= 1001)
         {
             printf("minishell: warning: shell level (1001) too high, resetting to 1\n");
+            free(envp->value);
             envp->value = ft_itoa(1);
             return ;
         }
-        envp->value = ft_itoa(i);
-        data.exit_status = 0;
-        return ;
+        else
+        {
+            free(envp->value);
+            envp->value = ft_itoa(i);
+            data.exit_status = 0;
+            return ;
+        }
     }  
 }

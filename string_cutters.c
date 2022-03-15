@@ -68,9 +68,9 @@ char *cut_and_change_piece(char *str, int start, char *name, char *value)
     int  size;
 
     size = 0;
-    size = ft_strlen(name) + 1;
-    tmp = ft_substr(str, 0, start);
-    tmp2 = ft_strdup(value);
+    size = ft_strlen(name) + 1; //2
+    tmp = ft_substr(str, 0, start); //aaa
+    tmp2 = ft_strdup(value); //0
     tmp3 = ft_substr(str, start + size, ft_strlen(str) - start - size);
     if (!tmp || !tmp2)
         return (NULL);

@@ -67,20 +67,25 @@ int ft_array_envp(t_envp *envp, t_data **data) //
 
 void init_t_envp(t_data *data, t_envp **envp) // инцилизация t_envp
 {
-    int i = 0;
     char **tmp;
-   
+    char *name;
+    char *value;
+    int i;
+    
+    i = 0;
+    tmp = NULL;
     while (data->env[i])
     {
         tmp = ft_split(data->env[i], '=');
+        name = ft_strdup(tmp[0]);
+        value = ft_strdup(tmp[1]);
+        malloc_free(tmp);
         if (*envp == NULL)
-            *envp = ft_lstnew(tmp[0], tmp[1]);
+            *envp = ft_lstnew(name, value);
         else
-            push_back(tmp[0], tmp[1], *envp);
-        free(tmp);
+            push_back(name, value, *envp);
         i++;
     }
-    // data->envp = *envp; //мб не так
 }
 
 int env_copy(t_data *data, char **env)

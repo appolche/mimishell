@@ -43,9 +43,7 @@ void ft_push_back(t_list *list, char *content)
 
     node = (t_list *)malloc(sizeof(t_list));
     while (list->next)
-    {
         list = list->next;
-    }
     list->next = node;
     node->prev = list;
     node->next = NULL;

@@ -20,9 +20,7 @@ void push_back(char *name, char *value, t_envp *check)
 	if (!(next_node = (t_envp *)malloc(sizeof(t_envp))))
 		exit (2);
 	while (check->next)
-    {
         check = check->next;
-    }
 	next_node->value = value;
     next_node->name = name;
 	next_node->prev = check;

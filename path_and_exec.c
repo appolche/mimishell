@@ -58,7 +58,6 @@ void path_search(char **path, char **cmd, char **envp)
 		tmp = ft_strjoin(tmp3, ft_strdup("/"));
 		tmp2 = ft_strdup(cmd[0]);
 		final_path = ft_strjoin(tmp, tmp2);
-		// printf("%s\n", final_path);
 		if (access(final_path, X_OK) == 0)
 		{
 			if (execve(final_path, cmd, envp) == -1)
@@ -66,6 +65,7 @@ void path_search(char **path, char **cmd, char **envp)
 				printf("minishell: %s: command not found\n", cmd[0]);
 				malloc_free(path);
 				free(final_path);
+				data.exit_status = 127;
 				exit(127);
 			}
 		}
@@ -104,9 +104,6 @@ void ft_exec(char **cmd, t_envp *env_list)
 	if (path)
 		path_search(path, cmd, envp);
 	printf("minishell: %s: No such file or directory", cmd[0]);
+	data.exit_status = 127;
 	exit(127);
-	// else
-	// 	show_error("Error: Path not found\n");
-	// if (cmd)
-	// 	malloc_free(cmd);
 }
