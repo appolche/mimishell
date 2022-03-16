@@ -1,23 +1,5 @@
 #include "minishell.h"
 
-void redirect_fd(t_list *list)
-{
-	if (list->file_fd[0] >= 0)
-	{
-		dup2(list->file_fd[0], 0);
-		close(list->file_fd[0]);
-	}
-	else if(list->file_fd[0] == -1)
-		exit(1);
-	if (list->file_fd[1] >= 0)
-	{
-		dup2(list->file_fd[1], 1); //добавить проверки на dup;
-		close(list->file_fd[1]);
-	}
-	else if(list->file_fd[1] == -1)
-		exit(1);
-}
-
 void pipe_parent_proc(int pipe_fd[2], pid_t pid)
 {
 	close(pipe_fd[1]);
@@ -40,7 +22,7 @@ void pipe_child_proc(t_list *list, char **cmd, int pipe_fd[2], t_envp *envp)
 		ft_exec(cmd, envp);
 }
 
-void pipe_proc(t_list *list, char **cmd, t_envp *envp, t_data *data)
+void pipe_proc(t_list *list, char **cmd, t_envp *envp)
 {
 	pid_t pid;
 	int pipe_fd[2];
@@ -56,40 +38,43 @@ void pipe_proc(t_list *list, char **cmd, t_envp *envp, t_data *data)
 		pipe_parent_proc(pipe_fd, pid);
 }
 
-void pipe_cmd_proc(t_list *list, t_envp *envp, t_data *data)
+void built_in_funcs_proc(t_list *list, t_envp *envp)
+{
+	set_default_sig();
+	while (list->next)
+	{
+		pipe_proc(list, list->cmd, envp);
+		list = list->next;
+	}
+	redirect_fd(list);
+	if (is_my_command(list))
+	{
+		exec_my_cmd(list, envp);
+		exit(1);
+	}
+	else
+		ft_exec(list->cmd, envp);
+}
+
+void pipe_cmd_proc(t_list *list, t_envp *envp)
 {
 	t_list *tmp;
 	pid_t pid;
 
 	if (list->cmd[0] == NULL)
-		return ;
+		return;
 	if (list->next == NULL && check_my_cmd(list->cmd))
 	{
 		exec_my_single_cmd(list, envp);
-		return ;
+		return;
 	}
 	pid = fork();
 	if (pid == -1)
 		show_error("Error: Fork\n");
-	par_disable_sig();
+	disable_sig();
 	if (pid == 0)
-	{
-		par_set_default_sig();
-		while (list->next)
-		{
-			pipe_proc(list, list->cmd, envp, data);
-			list = list->next;
-		}
-		redirect_fd(list);
-		if (is_my_command(list))
-		{
-			exec_my_cmd(list, envp);
-			exit(1);
-		}
-		else
-			ft_exec(list->cmd, envp);
-	}
+		built_in_funcs_proc(list, envp);
 	else
 		waitpid(pid, NULL, 0);
-	par_set_custom_sig();
+	set_custom_sig();
 }

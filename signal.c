@@ -11,19 +11,19 @@ void	signal_handler(int sig)
 	}
 }
 
-void	par_set_default_sig()
+void	set_default_sig()
 {
 	signal(SIGINT, data.SIG_INT);
 	signal(SIGQUIT, data.SIG_QUIT);
 }
 
-void	par_set_custom_sig(void)
+void	set_custom_sig(void)
 {
 	signal(SIGINT, signal_handler);
 	signal(SIGQUIT, SIG_IGN);
 }
 
-void	par_disable_sig(void)
+void	disable_sig(void)
 {
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);

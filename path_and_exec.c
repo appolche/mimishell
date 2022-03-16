@@ -36,7 +36,7 @@ void absolute_path_exec(char **cmd, char **envp)
 	if (access(cmd[0], X_OK) == 0)
 	{
 		if (execve(cmd[0], cmd, envp) == -1)
-			show_error("Error: Cmd execution failed\n");
+			printf("minishell: %s: command not found\n", cmd[0]);
 	}
 	printf("minishell: %s: No such file or directory\n", cmd[0]);
 	data.exit_status = 127;

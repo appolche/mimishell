@@ -10,13 +10,23 @@ void parse_each_node(t_list *list)
     }
 }
 
-int parse_list(t_envp *envp, t_list *list, t_data *data)
+void check_redir(t_list *list, int *i)
+{
+    if (list->str_cmd[*i] == '>' || list->str_cmd[*i] == '<')
+    {
+        list->str_cmd = split_cmd_redir(list, list->str_cmd, *i);
+        (*i)--;
+    }
+    else
+        return ;
+}
+
+int parse_list(t_envp *envp, t_list *list)
 {
     int i;
 
     while (list)
     {
-        //учесть ошибки в кавычках, должен пропускать
         if (syntax_errors(list->str) || redir_syntax_errors(list->str))
             return (0);
         list->str_cmd = ft_strtrim(list->str, " ");
@@ -33,14 +43,10 @@ int parse_list(t_envp *envp, t_list *list, t_data *data)
                 if (list->str_cmd == NULL)
                     return (0);
             }
-            if (list->str_cmd[i] == '>' || list->str_cmd[i] == '<')
-            {
-                list->str_cmd = split_cmd_redir(list, list->str_cmd, i);
-                i--;
-            }
+            check_redir(list, &i);
         }
         if (list->str_redir)
-            parse_redirect(list, list->str_redir, data);
+            parse_redirect(list, list->str_redir);
         list = list->next;
     }
     return (1);
@@ -53,6 +59,8 @@ int split_for_list(char *str, t_list **list)
 
     i = -1;
     j = 0;
+    if (syntax_errors(str))
+        return (0);
     while (str[++i])
     {
         if (str[i] == '\'')

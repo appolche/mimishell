@@ -1,58 +1,65 @@
 #include "minishell.h"
 
-// minishell: ls > "  fddddd   file1" > "   file2678" > "  |  file3   jj<>"
-//  minishell: error: unclosed double quotes
-//  minishell: ls > file1| <<file2<file3<file4 cat
-//  minishell: syntax error near unexpected token `<<'
-//  сделать обработку доллара в редиректе (раскрывает значение перемеенной и делает его filename)
-
-/*
-идем по строке
-встречаем <> (проверяем кавычки, только пропуская содержимое)
-запоминаем вид редиректа
-запоминаем имя
-отправляем имя и вид редиректа на исполнение
-записываем открытый фд в лист
-идем дальше по строке
-если встречаем новый редирект, то закрываем старый фд и перезаписываем fd
-*/
-
-void open_file(t_list *list, char *redir_type, char *file_name, t_data *data)
+void redirect_fd(t_list *list)
 {
-    int j;
+    if (list->file_fd[0] >= 0)
+    {
+        dup2(list->file_fd[0], 0);
+        close(list->file_fd[0]);
+    }
+    else if (list->file_fd[0] == -1)
+    {
+        printf("minishell: Permission denied\n");
+        exit(1);
+    }
+    if (list->file_fd[1] >= 0)
+    {
+        dup2(list->file_fd[1], 1);
+        close(list->file_fd[1]);
+    }
+    else if (list->file_fd[1] == -1)
+    {
+        printf("minishell: Permission denied\n");
+        exit(1);
+    }
+}
 
-    j = 0;
-    if (redir_type[j] == '>')
+void open_input_fd(t_list *list, char *redir_type, char *file_name)
+{
+    if (list->file_fd[0] != -1 || list->file_fd[0] != -2)
+        close(list->file_fd[0]);
+    if (redir_type[1] == '<')
+        list->file_fd[0] = here_doc_mode(file_name);
+    else if (redir_type[1] == '>')
+        printf("minishell: syntax error near unexpected token `newline'\n");
+    else
     {
-        if (list->file_fd[1] != -1 || list->file_fd[1] != -2)
-            close(list->file_fd[1]);
-        if (redir_type[j + 1] == '>')
-        {
-            list->file_fd[1] = open(file_name, O_WRONLY | O_CREAT | O_APPEND, 0666);
-            if (list->file_fd[1] == -1)
-                printf("minishell: %s: Permission denied\n", file_name);
-        }
-        else
-            list->file_fd[1] = open(file_name, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+        list->file_fd[0] = open(file_name, O_RDONLY);
+        if (list->file_fd[0] == -1)
+            data.exit_status = 1;
     }
-    else if (redir_type[j] == '<')
+}
+
+void open_output_fd(t_list *list, char *redir_type, char *file_name)
+{
+    if (list->file_fd[1] != -1 || list->file_fd[1] != -2)
+        close(list->file_fd[1]);
+    if (redir_type[1] == '>')
     {
-        if (list->file_fd[0] != -1 || list->file_fd[0] != -2)
-            close(list->file_fd[0]);
-        if (redir_type[j + 1] == '<')
-            list->file_fd[0] = here_doc_mode(file_name, data);
-        else if (redir_type[j + 1] == '>')
-            printf("minishell: syntax error near unexpected token `newline'\n");
-        else
-        {
-            list->file_fd[0] = open(file_name, O_RDONLY);
-            if (list->file_fd[0] == -1)
-            {
-                // data.exit_status = 1;
-                printf("minishell: %s: No such file or directory\n", file_name);
-            }
-        }
+        list->file_fd[1] = open(file_name, O_WRONLY | O_CREAT | O_APPEND, 0666);
+        if (list->file_fd[1] == -1)
+            data.exit_status = 1;
     }
+    else
+        list->file_fd[1] = open(file_name, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+}
+
+void open_file(t_list *list, char *redir_type, char *file_name)
+{
+    if (redir_type[0] == '>')
+        open_output_fd(list, redir_type, file_name);
+    else if (redir_type[0] == '<')
+        open_input_fd(list, redir_type, file_name);
     if (redir_type)
     {
         free(redir_type);
@@ -65,49 +72,7 @@ void open_file(t_list *list, char *redir_type, char *file_name, t_data *data)
     }
 }
 
-char *filename_in_quotes(char *str, int *i, int c)
-{
-    char *file_name;
-    int quote_start;
-
-    quote_start = *i;
-    while (str[++(*i)])
-    {
-        if (str[*i] == c)
-            break;
-    }
-    file_name = ft_substr(str, quote_start + 1, *i - quote_start - 1);
-    return (file_name);
-}
-
-char *get_file_name(char *str, int i, int *ret)
-{
-    char *file_name;
-    int start;
-    int quote_start;
-
-    while (str[i] && str[i] == ' ')
-        i++;
-    start = i;
-    if (str[i] == '\'')
-        file_name = filename_in_quotes(str, &i, '\'');
-    else if (str[i] == '\"')
-        file_name = filename_in_quotes(str, &i, '\"');
-    else
-    {
-        while (str[i])
-        {
-            if (str[i] == ' ' || str[i] == '>' || str[i] == '<' || str[i] == '\'' || str[i] == '\"')
-                break;
-            i++;
-        }
-        file_name = ft_substr(str, start, i - start);
-    }
-    *ret = i;
-    return (file_name);
-}
-
-void parse_redirect(t_list *list, char *str_redir, t_data *data)
+void parse_redirect(t_list *list, char *str_redir)
 {
     int i;
     int j;
@@ -133,7 +98,7 @@ void parse_redirect(t_list *list, char *str_redir, t_data *data)
         }
         redir_type = ft_substr(str, j, count);
         file_name = get_file_name(str, i, &i);
-        open_file(list, redir_type, file_name, data);
+        open_file(list, redir_type, file_name);
     }
     free(str);
     str = NULL;

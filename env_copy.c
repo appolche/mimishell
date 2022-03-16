@@ -46,7 +46,7 @@ int ft_array_envp(t_envp *envp, t_data **data) //
     int i;
 
     tmp = ft_strdup("=");
-    if((*data)->env)
+    if ((*data)->env)
         (*data)->env = malloc_free((*data)->env);
     (*data)->env = (char **)malloc((size_list(envp) + 1) * sizeof(char *));
     if (!(*data)->env)

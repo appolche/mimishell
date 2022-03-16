@@ -61,7 +61,7 @@ int syntax_errors(char *str);
 int redir_syntax_errors(char *str);
 
 int     split_for_list(char *rl_str, t_list **list);
-int    parse_list(t_envp *envp, t_list *list, t_data *data);
+int    parse_list(t_envp *envp, t_list *list);
 
 //string_cutters
 char *split_cmd_redir(t_list *list, char *str, int i);
@@ -75,6 +75,7 @@ char    *ft_dollar(char *str, int *i, t_envp *envp);
 
 int     check_unclosed_quotes(char *str, int *i, int c);
 
+//lists
 t_list  *create_list(t_list *list, char *str, int i, int j);
 t_list  *create_head(char *content);
 void    ft_push_back(t_list *list, char *content);
@@ -87,8 +88,9 @@ void    cut_str_cmd(t_list *list, int start);
 char    *ft_substr_cpy(char *src, int *start, char c);
 void parse_each_node(t_list *list);
 
-void pipe_cmd_proc(t_list *list, t_envp *envp, t_data *data);
-void pipe_proc(t_list *list, char **cmd, t_envp *envp, t_data *data);
+//pipes
+void pipe_cmd_proc(t_list *list, t_envp *envp);
+void pipe_proc(t_list *list, char **cmd, t_envp *envp);
 void pipe_child_proc(t_list *list, char **cmd, int pipe_fd[2], t_envp *envp);
 void pipe_parent_proc(int pipe_fd[2], pid_t pid);
 void ft_exec(char **cmd, t_envp *env_list);
@@ -102,18 +104,22 @@ int check_my_cmd(char **cmd);
 void exec_my_cmd(t_list *list, t_envp *envp);
 void exec_my_single_cmd(t_list *list, t_envp *envp);
 
-int	here_doc_mode(char *limiter, t_data *data);
-void	here_doc_child(int pipe_fd[2], char *limiter);
+// heredoc
+int here_doc_mode(char *limiter);
+void    here_doc_child(int pipe_fd[2], char *limiter);
 
 
 char	**malloc_free(char **tab);
 void free_list(t_list **list);
 
-
-void parse_redirect(t_list *list, char *str_redir, t_data *data);
+//redirect
+void parse_redirect(t_list *list, char *str_redir);
 char *get_file_name(char *str, int i, int *ret);
 char *filename_in_quotes(char *str, int *i, int c);
-void open_file(t_list *list, char *redir_type, char *file_name, t_data *data);
+void open_file(t_list *list, char *redir_type, char *file_name);
+void open_output_fd(t_list *list, char *redir_type, char *file_name);
+void open_input_fd(t_list *list, char *redir_type, char *file_name);
+void redirect_fd(t_list *list);
 
 //sanya_part
 int env_copy(t_data *data, char **env);
@@ -125,57 +131,54 @@ t_envp *search_name(t_envp *envp, char *name);
 t_envp *struct_head (t_envp *envp);
 void    swap_list(t_envp *list);
 
-
+//cd
 void ft_cd(t_envp *envp, char **command);
 void ft_cd_next_step(t_envp *envp, char *command);
 char *cd_home(t_envp *envp);
 void change_envp_value(t_envp *envp, char *name, char *value);
-
+//echo
 void ft_echo(char **av);
 void ft_echo_next_step(char *av, int flag);
 int check_flag(char *str);
-
+//env
 void ft_env(t_envp *envp, char **argv);
 void ft_env_next_step(t_envp *envp);
-
+//exit
 void ft_exit(char **av);
 int array_len(char **av);
-
+//export
 void ft_export(t_envp **envp, char **argv);
 void ft_export_next_step(t_envp **envp, char *name);
 t_envp *copy_envp(t_envp *envp, t_envp *sort);
 t_envp	*export_new_name(t_envp *envp, char *name);
 void print_export(t_envp *list);
 int    ft_isdigit_char(char c);
-
+//pwd
 void ft_pwd(char **argv);
 void ft_pwd_print(void);
-
+//unset
 void ft_unset(t_envp **envp, char **name);
 void ft_unset_next_step(t_envp **envp, char *name);
 void delete_list(t_envp **list);
 void del_last_list(t_envp **envp);
 void del_list(t_envp **envp);
 void del_head(t_envp **envp);
-
+//free
 void	ft_lstclear(t_envp **lst);
 void free_env(t_data *data);
-
 
 int ft_array_envp(t_envp *envp, t_data **data);
 char    *ft_strjoin2(char *s1, char *s2);
 int size_list(t_envp *envp);
-
+//SHLVL
 void	ft_shlvl(t_envp *envp);
 int lookup_name_replace_value(t_envp *envp, char **value);
 
 // signal
 void	signal_handler(int sig);
-void	par_set_default_sig();
-void	par_set_custom_sig(void);
-void	par_disable_sig(void);
+void	set_default_sig();
+void	set_custom_sig(void);
+void	disable_sig(void);
 void	sig_init();
-void	sig_handler_child(int sig_num);
-
 
 #endif

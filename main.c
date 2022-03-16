@@ -2,12 +2,11 @@
 
 int shell_loop(t_data *data, t_envp *envp)
 {
-    t_list *list;
+    t_list  *list;
 
     while (1)
     {
         list = NULL;
-        // rl_on_new_line();
         data->str = readline("minishell: ");
         if (!data->str)
             exit(1);
@@ -18,10 +17,10 @@ int shell_loop(t_data *data, t_envp *envp)
         }
         if (list)
         {
-            if (parse_list(envp, list, data))
+            if (parse_list(envp, list))
             {
                 parse_each_node(list);
-                pipe_cmd_proc(list, envp, data);
+                pipe_cmd_proc(list, envp);
             }
         }
         if (list)
@@ -34,8 +33,8 @@ int shell_loop(t_data *data, t_envp *envp)
 
 int main(int argc, char **argv, char **env)
 {
-    t_data *data;
-    t_envp *envp;
+    t_data  *data;
+    t_envp  *envp;
 
     data = malloc(sizeof(t_data));
     if (!data)

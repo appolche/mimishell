@@ -3,8 +3,10 @@
 int syntax_errors(char *str)
 {
     int i;
+    int c;
 
     i = -1;
+    c = 0;
     while (str[++i])
     {
         if (str[0] == '|')
@@ -21,6 +23,20 @@ int syntax_errors(char *str)
         {
             printf("minishell: syntax error near unexpected token `|'\n");
             return (1);
+        }
+        else if (str[i] == '|')
+        {
+            c = 0;
+            while (str[i] == '|')
+            {
+                c++;
+                i++;
+            }
+            if (c > 1)
+            {
+                printf("minishell: syntax error near unexpected token `|'\n");
+                return (1);
+            }
         }
     }
     return (0);
