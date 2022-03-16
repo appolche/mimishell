@@ -2,16 +2,20 @@
 
 void redirect_fd(t_list *list)
 {
-	if (list->file_fd[0] != -1)
+	if (list->file_fd[0] >= 0)
 	{
 		dup2(list->file_fd[0], 0);
 		close(list->file_fd[0]);
 	}
-	if (list->file_fd[1] != -1)
+	else if(list->file_fd[0] == -1)
+		exit(1);
+	if (list->file_fd[1] >= 0)
 	{
 		dup2(list->file_fd[1], 1); //добавить проверки на dup;
 		close(list->file_fd[1]);
 	}
+	else if(list->file_fd[1] == -1)
+		exit(1);
 }
 
 void pipe_parent_proc(int pipe_fd[2], pid_t pid)

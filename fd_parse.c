@@ -24,20 +24,20 @@ void open_file(t_list *list, char *redir_type, char *file_name, t_data *data)
     j = 0;
     if (redir_type[j] == '>')
     {
-        if (list->file_fd[1] != -1)
+        if (list->file_fd[1] != -1 || list->file_fd[1] != -2)
             close(list->file_fd[1]);
         if (redir_type[j + 1] == '>')
         {
             list->file_fd[1] = open(file_name, O_WRONLY | O_CREAT | O_APPEND, 0666);
             if (list->file_fd[1] == -1)
-                printf("minishell: syntax error near unexpected token `newline'\n");
+                printf("minishell: %s: Permission denied\n", file_name);
         }
         else
             list->file_fd[1] = open(file_name, O_WRONLY | O_CREAT | O_TRUNC, 0666);
     }
     else if (redir_type[j] == '<')
     {
-        if (list->file_fd[0] != -1)
+        if (list->file_fd[0] != -1 || list->file_fd[0] != -2)
             close(list->file_fd[0]);
         if (redir_type[j + 1] == '<')
             list->file_fd[0] = here_doc_mode(file_name, data);

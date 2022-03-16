@@ -91,12 +91,17 @@ void ft_shlvl(t_envp *envp)
 {
     int i;
     char *tmp;
+    char *name;
+    char *value;
+    t_envp *check;
 
     data.exit_status = 0;
-    envp = search_name(envp, "SHLVL");
-    if (!envp)
+    check = search_name(envp, "SHLVL");
+    if (!check)
     {
-        push_back(ft_strdup("SHLVL"), NULL, envp);
+        name = ft_strdup("SHLVL");
+        value = ft_strdup("0");
+        push_back(name, value, envp);
         return ;
     }
     if (!envp->value)
@@ -133,5 +138,6 @@ void ft_shlvl(t_envp *envp)
             data.exit_status = 0;
             return ;
         }
+        envp = struct_head(envp);
     }  
 }

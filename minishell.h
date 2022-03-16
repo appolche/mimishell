@@ -39,7 +39,6 @@ typedef struct s_list
     char *str_redir;
     char **cmd;
     int file_fd[2];
-    int heredoc;
 }   t_list;
 
 typedef struct s_data
