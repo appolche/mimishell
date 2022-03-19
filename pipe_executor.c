@@ -75,6 +75,10 @@ void pipe_cmd_proc(t_list *list, t_envp *envp)
 	if (pid == 0)
 		built_in_funcs_proc(list, envp);
 	else
-		waitpid(pid, NULL, 0);
+	{
+		waitpid(pid, &data.exit_status, WNOHANG & WUNTRACED);
+		if (WIFEXITED(data.exit_status))
+			data.exit_status = WEXITSTATUS(data.exit_status);
+	}
 	set_custom_sig();
 }

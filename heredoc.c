@@ -51,7 +51,9 @@ int	here_doc_mode(char *limiter)
 	else
 	{
 		close(pipe_fd[1]);
-		waitpid(pid, NULL, 0);
+		waitpid(pid, &data.exit_status, WNOHANG & WUNTRACED);
+		if (WIFEXITED(data.exit_status))
+			data.exit_status = WEXITSTATUS(data.exit_status);
 	}
 	set_custom_sig();
 	return (pipe_fd[0]);
