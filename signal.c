@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   signal.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lfallon </var/mail/lfallon>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/03/18 20:17:06 by lfallon           #+#    #+#             */
+/*   Updated: 2022/03/18 20:17:11 by lfallon          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 void	signal_handler(int sig)
@@ -11,10 +23,10 @@ void	signal_handler(int sig)
 	}
 }
 
-void	set_default_sig()
+void	set_default_sig(void)
 {
-	signal(SIGINT, data.SIG_INT);
-	signal(SIGQUIT, data.SIG_QUIT);
+	signal(SIGINT, g_data.sig_int);
+	signal(SIGQUIT, g_data.sig_quit);
 }
 
 void	set_custom_sig(void)
@@ -29,9 +41,9 @@ void	disable_sig(void)
 	signal(SIGQUIT, SIG_IGN);
 }
 
-void	sig_init()
+void	sig_init(void)
 {
 	rl_catch_signals = 0;
-	data.SIG_INT = signal(SIGINT, signal_handler);
-	data.SIG_QUIT = signal(SIGQUIT, SIG_IGN);
+	g_data.sig_int = signal(SIGINT, signal_handler);
+	g_data.sig_quit = signal(SIGQUIT, SIG_IGN);
 }

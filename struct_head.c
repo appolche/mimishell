@@ -1,23 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strlen.c                                        :+:      :+:    :+:   */
+/*   struct_head.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dleaves <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: lfallon </var/mail/lfallon>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/03/19 18:27:41 by dleaves           #+#    #+#             */
-/*   Updated: 2022/03/19 18:27:45 by dleaves          ###   ########.fr       */
+/*   Created: 2022/03/19 17:27:44 by lfallon           #+#    #+#             */
+/*   Updated: 2022/03/19 17:28:10 by lfallon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "minishell.h"
 
-size_t	ft_strlen(const char *s)
+t_envp	*struct_head(t_envp *envp)
 {
-	size_t	i;
+	t_envp	*tmp;
 
-	i = 0;
-	while (*(s++))
-		i++;
-	return (i);
+	tmp = envp;
+	while (tmp->prev)
+		tmp = tmp->prev;
+	envp = tmp;
+	return (envp);
 }

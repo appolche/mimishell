@@ -1,143 +1,110 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   shlvl.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lfallon </var/mail/lfallon>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/03/16 20:59:34 by lfallon           #+#    #+#             */
+/*   Updated: 2022/03/16 20:59:39 by lfallon          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
-// принимаем строку
-// проверить =, если его нет это не команда ft_strchr(name, '=');
-// команда не найдена exit_status = 127
-//проверить есть ли value, shlvl=0 (export_new_name переписать)
-// проверить на буквы или спецсимвол, если они есть shlvl=0 (ft_isalldigit(char *str))
-//если пришло число значение value-1, число записать строкой
-//если пришло число < 0, shlvl =0
-//если число привышает 998, shlvl = 1
 
-// на макек 
-// пишет все 
-// при переходе на новый уровень проверяет, что записано если это не число SHLVL=1
-
-
-//bash-3.2$ SHLVL=$SHLVL+100
-// bash-3.2$ env | grep SHLVL
-// SHLVL=2+100
-
-// SHLVL=1000
-// bash-3.2$ bash
-// bash: warning: shell level (1001) too high, resetting to 1
-// bash-3.2$ echo $?
-// 0
-
-//если SHLVL больше 999
-// SHLVL=999
-// bash-3.2$ bash
-// bash-3.2$ env | grep SHLVL
-// SHLVL=
-
-void free_mass(char **str)
+void	free_mass(char **str)
 {
-    int i;
+	int	i;
 
-    i = 0;
-    while(str[i])
-    {
-        free(str[i]);
-        i++;
-    }
-    free(str);
+	i = 0;
+	while (str[i])
+	{
+		free(str[i]);
+		i++;
+	}
+	free(str);
 }
 
-int lookup_name_replace_value(t_envp *envp, char **value)//функция поиска и изменения значения в переменных окружения
+int	check_value(char *str)
 {
-    char **tmp;
-    int i;
+	int	i;
 
-    tmp = (char **)malloc(sizeof(char *) * 2);
-    if (value[1])
-    {
-        printf("minishell: %s: command not found\n", value[1]);
-        data.exit_status = 127;
-        return (0);
-    }
-    i = ft_strchr(value[0], '=');
-    if (i == 0)
-        return (0);
-    tmp = ft_split(value[0], '=');
-    envp = search_name(envp, tmp[0]);
-    if (!envp)
-    {
-        free_mass(tmp);
-        return (0);
-    }
-    change_envp_value(envp, tmp[0], tmp[1]);
-    data.exit_status = 0;
-    free(tmp[0]); //возможно abort
-    free(tmp);
-    return (1);
-} 
-
-int check_value(char *str)
-{
-    int i;
-
-    i = 0;
-    
-    while (str[i])
-    {
-        if (ft_isdigit_char(str[i]))
-            return (1);
-        i++;
-    }
-    return (0);
+	i = 0;
+	while (str[i])
+	{
+		if (ft_isdigit_char(str[i]))
+			return (1);
+		i++;
+	}
+	return (0);
 }
 
-
-void ft_shlvl(t_envp *envp)
+void	shlvl_value_2(t_envp *envp, t_envp *check)
 {
-    int i;
-    char *tmp;
-    char *name;
-    char *value;
-    t_envp *check;
+	int	i;
 
-    data.exit_status = 0;
-    check = search_name(envp, "SHLVL");
-    if (!check)
-    {
-        name = ft_strdup("SHLVL");
-        value = ft_strdup("0");
-        push_back(name, value, envp);
-        return ;
-    }
-    if (!envp->value)
-    {
-        envp->value = ft_itoa(0);
-        return ;
-    }
-    if (check_value(envp->value) == 0)
-    {
-        free(envp->value);
-        envp->value = ft_itoa(1);
-        return ;
-    }
-    else
-    {
-        i = ft_atoi(envp->value) + 1;
-        if (i == 1000)
-        {
-            free(envp->value);
-            envp->value = NULL;
-            return ;
-        }
-        else if (i >= 1001)
-        {
-            printf("minishell: warning: shell level (1001) too high, resetting to 1\n");
-            free(envp->value);
-            envp->value = ft_itoa(1);
-            return ;
-        }
-        else
-        {
-            free(envp->value);
-            envp->value = ft_itoa(i);
-            data.exit_status = 0;
-            return ;
-        }
-        envp = struct_head(envp);
-    }  
+	i = ft_atoi(check->value) + 1;
+	if (i == 1000)
+	{
+		free(check->value);
+		check->value = NULL;
+	}
+	else if (i >= 1001)
+	{
+		printf("minishell: warning: shell level (1001) ");
+		printf("too high, resetting to 1\n");
+		free(check->value);
+		check->value = ft_itoa(1);
+	}
+	else
+	{
+		free(check->value);
+		check->value = ft_itoa(i);
+	}
+	envp = struct_head(check);
+	return ;
+}
+
+void	shlvl_value(t_envp *envp, t_envp *check)
+{
+	int	i;
+
+	if (check_value(check->value) == 0)
+	{
+		free(check->value);
+		check->value = ft_itoa(1);
+		envp = struct_head(check);
+		return ;
+	}
+	else
+	{
+		shlvl_value_2(envp, check);
+		return ;
+	}
+}
+
+void	ft_shlvl(t_envp *envp)
+{
+	char	*name;
+	char	*value;
+	t_envp	*check;
+
+	g_data.exit_status = 0;
+	check = search_name(envp, "SHLVL");
+	if (!check)
+	{
+		name = ft_strdup("SHLVL");
+		value = ft_strdup("0");
+		push_back(name, value, envp);
+		return ;
+	}
+	if (!check->value)
+	{
+		check->value = ft_itoa(0);
+		envp = struct_head(check);
+		return ;
+	}
+	else
+		shlvl_value(envp, check);
+	return ;
 }

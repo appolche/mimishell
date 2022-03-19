@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   heredoc.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dleaves <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/03/19 17:13:05 by dleaves           #+#    #+#             */
+/*   Updated: 2022/03/19 17:13:46 by dleaves          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static void	exit_here_doc(int sig)
@@ -22,7 +34,7 @@ void	here_doc_child(int pipe_fd[2], char *limiter)
 			exit(0);
 		}
 		write(pipe_fd[1], line, ft_strlen(line));
-        write(pipe_fd[1], "\n", 1);
+		write(pipe_fd[1], "\n", 1);
 		free(line);
 	}
 }
@@ -48,13 +60,10 @@ int	here_doc_mode(char *limiter)
 		signal(SIGINT, exit_here_doc);
 		here_doc_child(pipe_fd, limiter);
 	}
-	else
-	{
-		close(pipe_fd[1]);
-		waitpid(pid, &data.exit_status, WNOHANG & WUNTRACED);
-		if (WIFEXITED(data.exit_status))
-			data.exit_status = WEXITSTATUS(data.exit_status);
-	}
+	close(pipe_fd[1]);
+	waitpid(pid, &g_data.exit_status, WNOHANG & WUNTRACED);
+	if (WIFEXITED(g_data.exit_status))
+		g_data.exit_status = WEXITSTATUS(g_data.exit_status);
 	set_custom_sig();
 	return (pipe_fd[0]);
 }

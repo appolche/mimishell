@@ -1,84 +1,87 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   env_list_tools.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lfallon </var/mail/lfallon>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/03/19 17:26:33 by lfallon           #+#    #+#             */
+/*   Updated: 2022/03/19 17:26:36 by lfallon          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-t_envp *ft_lstnew(char *name, char *value) 
+t_envp	*ft_lstnew(char *name, char *value)
 {
-	t_envp *check;
+	t_envp	*check;
 
-	if (!(check = (t_envp *)malloc(sizeof(t_envp))))
+	check = (t_envp *)malloc(sizeof(t_envp));
+	if (!check)
 		return (NULL);
 	check->value = value;
-    check->name = name;
+	check->name = name;
 	check->prev = NULL;
 	check->next = NULL;
 	return (check);
 }
 
-void push_back(char *name, char *value, t_envp *check)
+void	push_back(char *name, char *value, t_envp *check)
 {
-	t_envp *next_node;
+	t_envp	*next_node;
 
-	if (!(next_node = (t_envp *)malloc(sizeof(t_envp))))
-		exit (2);
+	next_node = (t_envp *)malloc(sizeof(t_envp));
+	if (!next_node)
+		exit(2);
 	while (check->next)
-        check = check->next;
+		check = check->next;
 	next_node->value = value;
-    next_node->name = name;
+	next_node->name = name;
 	next_node->prev = check;
 	next_node->next = NULL;
 	check->next = next_node;
 }
 
-void	ft_lstclear(t_envp **lst) // очищение t_envp
+void	ft_lstclear(t_envp **lst)
 {
 	if (!lst || !(*lst))
 		return ;
-    if ((*lst)->next)
-	    ft_lstclear(&(*lst)->next);
-    if ((*lst)->name)
-	    free((*lst)->name);
-    if ((*lst)->value)
-	    free((*lst)->value);
-    if (*lst)
-	    free(*lst);
+	if ((*lst)->next)
+		ft_lstclear(&(*lst)->next);
+	if ((*lst)->name)
+		free((*lst)->name);
+	if ((*lst)->value)
+		free((*lst)->value);
+	if (*lst)
+		free(*lst);
 	*lst = NULL;
 }
 
-void free_env(t_data *data) // очищение t_data
+void	free_env(t_data *data)
 {
-    int i;
+	int	i;
 
-    i = 0;
-    while (data->env[i])
-        free(data->env[i++]);
-    free(data->env);
+	i = 0;
+	while (data->env[i])
+		free(data->env[i++]);
+	free(data->env);
 }
 
-t_envp *search_name(t_envp *envp, char *name) // функция поиска по структуре envp
+t_envp	*search_name(t_envp *envp, char *name)
 {
-    t_envp *tmp_head;
-    int i;
+	t_envp	*tmp_head;
+	int		i;
 
-    tmp_head = envp;
-    i = -1;
-    while (tmp_head != NULL)
-    {
-        i = ft_strcmp(name, tmp_head->name);
-        if (i == 0)            
-            break;
-        tmp_head = tmp_head->next;
-    }
-    if (i == -1)
-        return (NULL);
-    return (tmp_head); // обработать на NULL
-}
-
-t_envp *struct_head(t_envp *envp) //вспомогательная фун-ия для поиска головы
-{
-    t_envp *tmp;
-
-    tmp = envp;
-    while(tmp->prev)
-        tmp = tmp->prev;
-    envp = tmp;
-    return (envp);
+	tmp_head = envp;
+	i = -1;
+	while (tmp_head != NULL)
+	{
+		i = ft_strcmp(name, tmp_head->name);
+		if (i == 0)
+			break ;
+		tmp_head = tmp_head->next;
+	}
+	if (i == -1)
+		return (NULL);
+	return (tmp_head);
 }

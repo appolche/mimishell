@@ -80,21 +80,22 @@ void	ft_echo(char **av)
 	int	flag;
 	int	i;
 
+	printf("av[1]: %s\n", av[1]);
 	i = array_len(av);
 	if (i == 0)
 	{
 		printf("\n");
-		data.exit_status = 0;
+		g_data.exit_status = 0;
 		return ;
 	}
 	flag = check_flag(av[1]);
 	if (flag && i == 1)
 	{
 		printf("\r");
-		data.exit_status = 0;
+		g_data.exit_status = 0;
 		return ;
 	}
 	print_echo(flag, av);
-	data.exit_status = 0;
+	g_data.exit_status = 0;
 	return ;
 }

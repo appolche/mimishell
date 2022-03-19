@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   libft.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dleaves <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/03/19 18:28:25 by dleaves           #+#    #+#             */
+/*   Updated: 2022/03/19 19:42:36 by dleaves          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef LIBFT_H
 # define LIBFT_H
 
@@ -5,10 +17,10 @@
 # include <unistd.h>
 
 int		ft_isalnum(int c);
-int     ft_isdigit(int c);
-int     ft_atoi(const char *str);
+int		ft_isdigit(int c);
+int		ft_atoi(const char *str);
 char	**ft_split(char const *s, char c);
-int 	ft_strchr(char *s, int c);
+int		ft_strchr(char *s, int c);
 char	*ft_strdup(const char *s1);
 char	*ft_strjoin(char *s1, char *s2);
 size_t	ft_strlen(const char *s);
