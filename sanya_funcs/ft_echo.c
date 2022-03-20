@@ -80,7 +80,6 @@ void	ft_echo(char **av)
 	int	flag;
 	int	i;
 
-	printf("av[1]: %s\n", av[1]);
 	i = array_len(av);
 	if (i == 0)
 	{

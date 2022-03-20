@@ -103,6 +103,7 @@ void	path_search(char **path, char **cmd, char **envp);
 void	absolute_path_exec(char **cmd, char **envp);
 void	show_error(char *message);
 char	**make_env_array(t_envp *envp);
+int		check_first_cmd(t_list *list, t_envp *envp);
 /*cmds*/
 int		is_my_command(t_list *list);
 int		check_my_cmd(char **cmd);
@@ -122,6 +123,7 @@ void	open_file(t_list *list, char *redir_type, char *file_name);
 void	open_output_fd(t_list *list, char *redir_type, char *file_name);
 void	open_input_fd(t_list *list, char *redir_type, char *file_name);
 void	redirect_fd(t_list *list);
+void	redirect_rebuilts_fd(t_list *list);
 /*sanya_part*/
 int		env_copy(t_data *data, char **env);
 t_envp	*ft_lstnew(char *name, char *value);

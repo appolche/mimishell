@@ -75,11 +75,8 @@ void	pipe_cmd_proc(t_list *list, t_envp *envp)
 
 	if (list->cmd[0] == NULL)
 		return ;
-	if (list->next == NULL && check_my_cmd(list->cmd))
-	{
-		exec_my_single_cmd(list, envp);
+	if (check_first_cmd(list, envp))
 		return ;
-	}
 	pid = fork();
 	if (pid == -1)
 		perror(strerror(errno));

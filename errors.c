@@ -1,9 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   errors.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dleaves <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/03/20 17:32:32 by dleaves           #+#    #+#             */
+/*   Updated: 2022/03/20 17:36:10 by dleaves          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-int prepars_syntax_errors(char *str)
+int	prepars_syntax_errors(char *str)
 {
-	int i;
-	int c;
+	int	i;
+	int	c;
 
 	i = -1;
 	c = 0;
@@ -25,10 +37,10 @@ int prepars_syntax_errors(char *str)
 			return (1);
 		}
 	}
-	return (0);	
+	return (0);
 }
 
-int char_count(char *str, int i, int c)
+int	char_count(char *str, int i, int c)
 {
 	int	count;
 
@@ -45,12 +57,14 @@ int char_count(char *str, int i, int c)
 	return (count);
 }
 
-int syntax_errors(char *str, int i)
+int	syntax_errors(char *str, int i)
 {
 	if (str[i] == '|')
 	{
-		if (char_count(str, i, '|') > 0 || (str[i + 1] == '>' || str[i + 1] == '<'))
+		if (char_count(str, i, '|') > 0
+			|| (str[i + 1] == '>' || str[i + 1] == '<'))
 		{
+			g_data.exit_status = 258;
 			printf("minishell: syntax error\n");
 			return (1);
 		}
@@ -58,20 +72,26 @@ int syntax_errors(char *str, int i)
 	return (0);
 }
 
-int redir_syntax_errors(char *str, int i)
+int	redir_syntax_errors(char *str, int i)
 {
 	if (str[i] == '>')
 	{
-		if (char_count(str, i, '>') >= 2 || (str[i + 1] == ' ' && (str[i + 2] == '>' || str[i + 2] == '<')) || str[i + 1] == '|' || str[i + 1] == '<')
+		if (char_count(str, i, '>') >= 2 || (str[i + 1] == ' '
+				&& (str[i + 2] == '>' || str[i + 2] == '<'))
+			|| str[i + 1] == '|' || str[i + 1] == '<')
 		{
+			g_data.exit_status = 258;
 			printf("minishell: syntax error\n");
 			return (1);
 		}
 	}
 	else if (str[i] == '<')
 	{
-		if (char_count(str, i, '<') >= 2 || (str[i + 1] == ' ' && (str[i + 2] == '>' || str[i + 2] == '<')) || str[i + 1] == '|' || str[i + 1] == '<')
+		if (char_count(str, i, '<') >= 2 || (str[i + 1] == ' '
+				&& (str[i + 2] == '>' || str[i + 2] == '<'))
+			|| str[i + 1] == '|' || str[i + 1] == '<')
 		{
+			g_data.exit_status = 258;
 			printf("minishell: syntax error\n");
 			return (1);
 		}

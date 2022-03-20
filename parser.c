@@ -24,11 +24,10 @@ void	parse_each_node(t_list *list)
 
 void	check_redir(t_list *list, int *i)
 {
-	if (list->str_cmd[*i] == '>' || list->str_cmd[*i] == '<')
+	if ((list->str_cmd[*i] == '>' || list->str_cmd[*i] == '<')
+		&& list->str_cmd[*i + 1] != '\0')
 	{
-		printf("list->str_cmd before cut: %s\n", list->str_cmd);
 		list->str_cmd = split_cmd_redir(list, list->str_cmd, *i);
-		printf("list->str_cmd after cut: %s\n", list->str_cmd);
 		(*i)--;
 	}
 	else
@@ -95,7 +94,10 @@ int	split_for_list(char *str, t_list **list)
 	i = -1;
 	j = 0;
 	if (prepars_syntax_errors(str))
+	{
+		g_data.exit_status = 258;
 		return (0);
+	}
 	if (str_check_loop(str, list, &i, &j))
 	{
 		*list = create_list(*list, str, i, j);

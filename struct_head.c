@@ -22,3 +22,9 @@ t_envp	*struct_head(t_envp *envp)
 	envp = tmp;
 	return (envp);
 }
+
+void	show_error(char *message)
+{
+	printf("%s\n", message);
+	exit(1);
+}

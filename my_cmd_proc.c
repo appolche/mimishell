@@ -12,6 +12,24 @@
 
 #include "minishell.h"
 
+void	redirect_rebuilts_fd(t_list *list)
+{
+	if (list->file_fd[0] >= 0)
+		dup2(list->file_fd[0], 0);
+	else if (list->file_fd[0] == -1)
+	{
+		printf("minishell: Permission denied\n");
+		return ;
+	}
+	if (list->file_fd[1] >= 0)
+		dup2(list->file_fd[1], 1);
+	else if (list->file_fd[1] == -1)
+	{
+		printf("minishell: Permission denied\n");
+		return ;
+	}
+}
+
 void	exec_my_single_cmd(t_list *list, t_envp *envp)
 {
 	if (!ft_strcmp(list->cmd[0], "export"))
@@ -26,7 +44,6 @@ void	exec_my_single_cmd(t_list *list, t_envp *envp)
 		ft_pwd(list->cmd);
 	else if (!ft_strcmp(list->cmd[0], "echo"))
 		ft_echo(list->cmd);
-	// redirect_fd(list);
 }
 
 int	check_my_cmd(char **cmd)

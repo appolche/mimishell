@@ -38,7 +38,7 @@ void	redirect_fd(t_list *list)
 
 void	open_input_fd(t_list *list, char *redir_type, char *file_name)
 {
-	if (list->file_fd[0] != -1 || list->file_fd[0] != -2)
+	if (list->file_fd[0] > -1)
 		close(list->file_fd[0]);
 	if (redir_type[1] == '<')
 		list->file_fd[0] = here_doc_mode(file_name);
@@ -54,7 +54,7 @@ void	open_input_fd(t_list *list, char *redir_type, char *file_name)
 
 void	open_output_fd(t_list *list, char *redir_type, char *file_name)
 {
-	if (list->file_fd[1] != -1 || list->file_fd[1] != -2)
+	if (list->file_fd[1] > -1)
 		close(list->file_fd[1]);
 	if (redir_type[1] == '>')
 	{

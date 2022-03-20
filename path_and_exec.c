@@ -12,10 +12,28 @@
 
 #include "minishell.h"
 
-void	show_error(char *message)
+int	check_first_cmd(t_list *list, t_envp *envp)
 {
-	printf("%s\n", message);
-	exit(1);
+	int	fd[2];
+
+	fd[0] = dup(0);
+	fd[1] = dup(1);
+	if (list->next == NULL && check_my_cmd(list->cmd))
+	{
+		redirect_rebuilts_fd(list);
+		exec_my_single_cmd(list, envp);
+		dup2(fd[0], 0);
+		dup2(fd[1], 1);
+		close(fd[0]);
+		close(fd[1]);
+		return (1);
+	}
+	else
+	{
+		close(fd[0]);
+		close(fd[1]);
+		return (0);
+	}
 }
 
 char	**make_env_array(t_envp *envp)
